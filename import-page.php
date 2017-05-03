@@ -1,62 +1,58 @@
-		<div class="wrap ">
-			<div id="icon-options-general" class="icon32"><br /></div>
-			<h2><?php _e( 'POI Mapper' , 'poi-mapper' ); ?></h2>
-            <?php if ($message) : ?>
-                <div class="updated <?php if ($error) echo 'error'; ?>">
-                    <p><?php _e($message); ?></p>
-                </div>
-            <?php endif; ?>
-            <div id="output" class="updated hidden"></div>
-			<form action="" method="post" enctype="multipart/form-data" id="upload_form" onsubmit="return false">
-                <input type="hidden" name="action" value="import_csv" />
-                <h3><?php _e( 'CSV Import' , 'poi-mapper' ); ?></h3>
-
-				<table class="form-table">
-                    <tr valign="top">
-                        <td scope="row">
-                            <?php _e( 'CSV File' , 'poi-mapper' ); ?>
-                        </td>
-                        <td>
-                            <input name="file" type="file" />
-                        </td>
-                    </tr>
-					<tr valign="top">
-						<td scope="row" width="200">
-							<?php _e( 'Use LOCAL' , 'poi-mapper' ); ?>
-						</td>
-						<td>
-							<input type="checkbox" name="use-local" value="1" <?php echo ($this->get_option('use-local') ? 'checked="checked"' : '' )?> />
-						</td>
-					</tr>
-					<tr valign="top">
-						<td scope="row">
-							<?php _e( 'Skip first rows' , 'poi-mapper' ); ?>
-						</td>
-						<td>
-                            <input type="number" name="skip-rows" value="<?php echo $this->get_option('skip-rows'); ?>" size="100" />
-						</td>
-					</tr>
-
-				</table>
-				<p class="submit">
-                    <img src="images/loading.gif" id="loading-img" style="display:none;" alt="Please Wait"/>
-					<input type="submit" class="button-primary" value="<?php _e( 'Upload' , 'poi-mapper' ) ?>" id="upload_btn" />
-				</p>
-			</form>
-            <div id="progress-wrp"><div class="progress-bar"></div ><div class="status">0%</div></div>
-		</div>
+<div class="wrap ">
+    <div id="icon-options-general" class="icon32"><br /></div>
+    <h2><?php _e( 'POI Mapper' , 'poi-mapper' ); ?></h2>
+    <?php if ($message) : ?>
+        <div class="updated <?php if ($error) echo 'error'; ?>">
+            <p><?php _e($message); ?></p>
+        </div>
+    <?php endif; ?>
+    <div id="output" class="updated hidden"></div>
+    <form action="" method="post" enctype="multipart/form-data" id="upload_form" onsubmit="return false">
+        <input type="hidden" name="action" value="import_csv" />
+        <h3><?php _e( 'CSV Import' , 'poi-mapper' ); ?></h3>
+        <table class="form-table">
+            <tr valign="top">
+                <td scope="row" width="200">
+                    <?php _e( 'CSV File' , 'poi-mapper' ); ?>
+                </td>
+                <td>
+                    <input name="file" type="file" />
+                </td>
+            </tr>
+            <tr valign="top">
+                <td scope="row">
+                    <?php _e( 'Skip first rows' , 'poi-mapper' ); ?>
+                </td>
+                <td>
+                    <input type="number" name="skip-rows" value="1" size="100" />
+                </td>
+            </tr>
+            <tr valign="top">
+                <td scope="row">
+                    <?php _e( 'Re-create table' , 'poi-mapper' ); ?>
+                </td>
+                <td>
+                    <input type="checkbox" name="re-create" value="1" />
+                </td>
+            </tr>
+        </table>
+        <p class="submit">
+            <img src="images/loading.gif" id="loading-img" style="display:none;" alt="Please Wait"/>
+            <input type="submit" class="button-primary" value="<?php _e( 'Upload' , 'poi-mapper' ) ?>" id="upload_btn" />
+        </p>
+    </form>
+    <div id="progress-wrp" class="progress progress-striped active">
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
+    </div>
+</div>
 <script>
-    function confirmResetPoiMapperData() {
-        return confirm("<?php _e( 'Are you sure to reset POI Mapper settings?' , 'poi-mapper' ) ?>");
-    }
-
     var max_file_size 			= <?php echo $maxFileSize; ?>; //allowed file size. (1 MB = 1048576)
     var allowed_file_types 		= ['text/csv','application/csv']; //allowed file types
     var result_output 			= '#output'; //ID of an element for response output
     var my_form_id 				= '#upload_form'; //ID of an element for response output
     var my_button_id 			= '#upload_btn';
     var total_files_allowed 	= 1; //Number files allowed to upload
-    var progress_bar_id 		= '#progress-wrp'; //ID of an element for response output
+    var progress_bar 		    = '.progress-bar'; //ID of an element for response output
 
     //on form submit
     jQuery(my_button_id).on( "click", function(event) {
@@ -122,8 +118,7 @@
                                     percent = Math.ceil(position / total * 100);
                                 }
                                 //update progressbar
-                                jQuery(progress_bar_id +" .progress-bar").css("width", + percent +"%");
-                                jQuery(progress_bar_id + " .status").text(percent +"%");
+                                jQuery(progress_bar).css('width', percent+'%').attr('aria-valuenow', percent).html(percent+'%');
                             }, true);
                         }
                         return xhr;
@@ -146,14 +141,6 @@
         jQuery(error).each(function(i){ //output any error to output element
             jQuery(result_output).replaceWith('<div id="output" class="updated error">'+error[i]+"</div>");
         });
-
-        //function to format bites bit.ly/19yoIPO
-        function bytesToSize(bytes) {
-            var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-            if (bytes == 0) return '0 Bytes';
-            var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-            return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-        }
     });
 
 </script>

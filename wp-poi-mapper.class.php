@@ -37,14 +37,14 @@ if (!class_exists('POIMapper')) {
         protected function defaults()
         {
             return array(
-                'use-local'         => 0,
-                'skip-rows'         => 0,
+                'use-local'         => 1,
                 'fields-terminated' => ',',
                 'fields-enclosed'   => '"',
-                'fields-escaped'    => '\\',
+                'fields-escaped'    => '\\\\',
                 'lines-starting'    => '',
-                'lines-terminated'  => '\\r\\n',
+                'lines-terminated'  => '\\n',
                 'gmap-key'          => '',
+                'fields'            => array(),
             );
         }
 
@@ -66,34 +66,5 @@ if (!class_exists('POIMapper')) {
                 return false;
             }
         }
-
-//        public function getCDNs()
-//        {
-//            $cdns = $this->get_option('wp-poi-mapper-hosts');
-//            if (is_array($cdns)) {
-//                $empties = array();
-//                array_walk($cdns, function (&$item, $key) use (&$empties) {
-//                    if ($item) {
-//                        $item = trim(strtolower($item));
-//                        if (substr($item, 0, 4) !== 'http') {
-//                            $item = 'http://' . $item;
-//                        }
-//                        if (substr($item, -1) !== '/') {
-//                            $item .= '/';
-//                        }
-//                    } else {
-//                        // mark empty item
-//                        $empties[$key] = '';
-//                    }
-//                });
-//                if (count($empties)) {
-//                    // remove empty items
-//                    $cdns = array_diff_key($cdns, $empties);
-//                }
-//                return count($cdns) ? $cdns : false;
-//            }
-//            return false;
-//        }
-
     }
 }
