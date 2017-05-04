@@ -1,42 +1,11 @@
 <?php
 
 /**
- * POIMapperAdmin class for admin actions
+ * CSV2DBAdmin class for admin actions
  *
  */
-class POIMapperAdmin extends POIMapper
+class CSV2DBAdmin extends CSV2DB
 {
-
-    /**
-     * Full file system path to the main plugin file
-     *
-     * @since 3.0.0.0
-     * @var string
-     */
-    protected $plugin_file;
-
-    /**
-     * Path to the main plugin file relative to WP_CONTENT_DIR/plugins
-     *
-     * @since 3.0.0.0
-     * @var string
-     */
-    protected $plugin_basename;
-
-    /**
-     * Name of options page hook
-     *
-     * @since 3.0.0.1
-     * @var string
-     */
-    protected $options_page_hookname;
-
-    /**
-     * Plugin slug to detect available updates
-     * @var string
-     */
-    protected $plugin_slug;
-
     private $dataIdField = '';
 
     /**
@@ -47,49 +16,60 @@ class POIMapperAdmin extends POIMapper
     public function __construct()
     {
         parent::__construct();
-        $this->plugin_file = __DIR__ . '/wp-poi-mapper.php';
-        $this->plugin_basename = plugin_basename($this->plugin_file);
-        $this->plugin_slug = basename(__DIR__);
 
         register_activation_hook($this->plugin_file, array($this, 'init'));
-        add_action('admin_init', array($this, 'register_settings'));
-        add_action('admin_menu', array($this, 'add_page'), 11, 0);
-        add_action('wp_ajax_import_csv', array($this, 'import_csv'));
-        add_action('wp_ajax_analyze_csv', array($this, 'analyze_csv'));
-        add_action('wp_ajax_items_paginated', array($this, 'items_paginated'));
+
+        // routing actions
+        if (isset($_POST['action'])) {
+            switch ($_POST['action']) {
+                case 'save_fields':
+                    $this->saveFields();
+                    break;
+                case 'export_schema':
+                    $this->exportSchema();
+                    break;
+                case 'create_table':
+                    $this->createTable();
+                    break;
+                case 'clear_fields':
+                    $this->clearFields();
+                    break;
+                case 'export_fields':
+                    $this->exportFields();
+                    break;
+                case 'import_fields':
+                    $this->importFields();
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Whitelist the csv-to-db options
+     *
+     * @since 3.0.0.1
+     * @return none
+     */
+    function registerSettings()
+    {
+        register_setting('csv-to-db', 'csv-to-db', array($this, 'update'));
+    }
+
+    public function init()
+    {
+        parent::init();
+        add_action('admin_init', array($this, 'registerSettings'));
+        add_action('admin_menu', array($this, 'addPage'), 11, 0);
+        add_action('wp_ajax_import_csv', array($this, 'importCsv'));
+        add_action('wp_ajax_analyze_csv', array($this, 'analyzeCsv'));
+        add_action('wp_ajax_get_items', array($this, 'getItems'));
 
         wp_enqueue_style('poi_mapper_bootstrap_css', plugins_url('/bootstrap/css/bootstrap.min.css', __FILE__));
         wp_enqueue_style('poi_mapper_bootstrap_table_css', plugins_url('/bootstrap-table/bootstrap-table.css', __FILE__));
         wp_enqueue_script('poi_mapper_bootstrap_js', plugins_url('/bootstrap/js/bootstrap.min.js', __FILE__));
         wp_enqueue_script('poi_mapper_bootstrap_table_js', plugins_url('/bootstrap-table/bootstrap-table.js', __FILE__));
         wp_enqueue_script('poi_mapper_bootstrap_table_export_js', plugins_url('/bootstrap-table/extensions/export/bootstrap-table-export.min.js', __FILE__));
-    }
-
-    /**
-     * Whitelist the poi-mapper options
-     *
-     * @since 3.0.0.1
-     * @return none
-     */
-    function register_settings()
-    {
-        register_setting('poi-mapper', 'poi-mapper', array($this, 'update'));
-    }
-
-    public function init()
-    {
-        parent::init();
-        // routing actions
-        if (isset($_POST['action'])) {
-            switch ($_POST['action']) {
-                case 'save_schema':
-                    $this->save_schema();
-                    break;
-                case 'export_schema':
-                    $this->export_schema();
-                    break;
-            }
-        }
+        wp_enqueue_script('poi_mapper_bootstrap_table_export_addon_js', plugins_url('/bootstrap-table/tableExport.min.js', __FILE__));
     }
 
     /**
@@ -101,7 +81,7 @@ class POIMapperAdmin extends POIMapper
      */
     public function update($options)
     {
-        if (!empty($_POST['wp-poi-mapper-defaults'])) {
+        if (!empty($_POST['csv-to-db-defaults'])) {
             $this->options = $this->defaults();
         } else {
             foreach ($this->defaults() as $key => $value) {
@@ -123,13 +103,13 @@ class POIMapperAdmin extends POIMapper
      * @return none
      * @since 2.0.3
      */
-    public function add_page()
+    public function addPage()
     {
         if (current_user_can('manage_options')) {
-            add_menu_page(__('POI Mapper', 'poi-mapper'), __('POI Mapper', 'poi-mapper'), 'manage_options', 'wp-poi-mapper', array($this, 'items_page'), 'dashicons-location');
-            add_submenu_page('wp-poi-mapper', __('Import', 'poi-mapper'), __('Import', 'poi-mapper'), 'manage_options', 'wp-poi-mapper-import', array($this, 'import_page'));
-            add_submenu_page('wp-poi-mapper', __('Fields', 'poi-mapper'), __('Fields', 'poi-mapper'), 'manage_options', 'wp-poi-mapper-fields', array($this, 'fields_page'));
-            add_submenu_page('wp-poi-mapper', __('Settings', 'poi-mapper'), __('Settings', 'poi-mapper'), 'manage_options', 'wp-poi-mapper-settings', array($this, 'admin_page'));
+            add_menu_page(__('CSV to DB', 'csv-to-db'), __('CSV to DB', 'csv-to-db'), 'manage_options', 'wp-csv-to-db', array($this, 'itemsPage'), 'dashicons-book-alt');
+            add_submenu_page('wp-csv-to-db', __('Import', 'csv-to-db'), __('Import', 'csv-to-db'), 'manage_options', 'wp-csv-to-db-import', array($this, 'importPage'));
+            add_submenu_page('wp-csv-to-db', __('Fields', 'csv-to-db'), __('Fields', 'csv-to-db'), 'manage_options', 'wp-csv-to-db-fields', array($this, 'fieldsPage'));
+            add_submenu_page('wp-csv-to-db', __('Settings', 'csv-to-db'), __('Settings', 'csv-to-db'), 'manage_options', 'wp-csv-to-db-settings', array($this, 'adminPage'));
         }
     }
 
@@ -138,11 +118,9 @@ class POIMapperAdmin extends POIMapper
      *
      * @return none
      */
-    public function admin_page()
+    public function adminPage()
     {
-        if (!@include(dirname(__FILE__) . '/options-page.php')) {
-            _e(sprintf('<div id="message" class="updated fade"><p>The options page for the <strong>POI Mapper</strong> cannot be displayed.  The file <strong>%s</strong> is missing.  Please reinstall the plugin.</p></div>', dirname(__FILE__) . '/options-page.php'));
-        }
+        include(dirname(__FILE__) . '/options-page.php');
     }
 
     /**
@@ -150,31 +128,62 @@ class POIMapperAdmin extends POIMapper
      *
      * @return none
      */
-    public function import_page()
+    public function importPage()
     {
         if (!count($this->options['fields'])) {
-            _e(sprintf('<div id="message" class="updated error"><p>Fields undefined! Click <a href="%s">Fields</a> to prepare the fields.</p></div>', 'admin.php?page=wp-poi-mapper-fields'));
+            _e(sprintf('<div id="message" class="updated error"><p>Fields undefined! Click <a href="%s">Fields</a> to prepare the fields.</p></div>', 'admin.php?page=wp-csv-to-db-fields'));
         } else {
             $maxFileSize = $this->convertBytes(ini_get('upload_max_filesize'));
             include('import-page.php');
         }
     }
 
-    public function fields_page()
+    public function fieldsPage()
     {
+        $message = $this->message;
         $maxFileSize = $this->convertBytes(ini_get('upload_max_filesize'));
         include('fields-page.php');
     }
 
-    public function items_page()
+    public function itemsPage()
     {
         $columns = $this->collectColumnsToShow();
         $idField = $this->dataIdField;
         if (!count($columns)) {
-            _e(sprintf('<div id="message" class="updated error"><p>Columns undefined! Click <a href="%s">Fields</a> to prepare the fields.</p></div>', 'admin.php?page=wp-poi-mapper-fields'));
+            _e(sprintf('<div id="message" class="updated error"><p>Columns undefined! Click <a href="%s">Fields</a> to prepare the fields.</p></div>', 'admin.php?page=wp-csv-to-db-fields'));
         } else {
             include('items-page.php');
         }
+    }
+
+    public function importFields()
+    {
+        try {
+            $tmpFileName = $this->uploadFile();
+            if ($tmpFileName) {
+                $content = unserialize(file_get_contents($tmpFileName));
+                if ($content) {
+                    $this->options['fields'] = $content;
+                    update_option('csv-to-db', $this->options);
+                    echo json_encode(
+                        array(
+                            'success' => true,
+                            'message' => __('Success!', 'csv-to-db'),
+                        )
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            echo json_encode(
+                array(
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                )
+            );
+        }
+        // remove temp file
+        @unlink($tmpFileName);
+        wp_die();
     }
 
     /**
@@ -188,24 +197,19 @@ class POIMapperAdmin extends POIMapper
 
             $uploadDirectory = wp_upload_dir();
 
-            //check if this is an ajax request
-            if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-                return;
-            }
-
             //Is file size is less than allowed size.
             if ($_FILES["file"]["size"] > $this->convertBytes(ini_get('upload_max_filesize'))) {
-                throw new Exception(__('File size is too big!', 'poi-mapper'));
+                throw new Exception(__('File size is too big!', 'csv-to-db'));
             }
 
             //allowed file type Server side check
             switch (strtolower($_FILES['file']['type'])) {
                 //allowed file types
                 case 'text/csv':
-                case 'application/csv':
+                case 'text/plain':
                     break;
                 default:
-                    throw new Exception(__('Unsupported File!', 'poi-mapper'));
+                    throw new Exception(__('Unsupported File!', 'csv-to-db'));
             }
 
             $fileName = strtolower($_FILES['file']['name']);
@@ -217,17 +221,17 @@ class POIMapperAdmin extends POIMapper
             if (move_uploaded_file($_FILES['file']['tmp_name'], $tmpFileName)) {
                 return $tmpFileName;
             } else {
-                throw new Exception(__('Error uploading File!', 'poi-mapper'));
+                throw new Exception(__('Error uploading File!', 'csv-to-db'));
             }
         } else {
-            throw new Exception(__('Something wrong with upload! Is "upload_max_filesize" set correctly?', 'poi-mapper'));
+            throw new Exception(__('Something wrong with upload! Is "upload_max_filesize" set correctly?', 'csv-to-db'));
         }
     }
 
     /**
      * Import CSV file by AJAX
      */
-    public function import_csv()
+    public function importCsv()
     {
         header('Content-Type: application/json');
         try {
@@ -246,7 +250,7 @@ class POIMapperAdmin extends POIMapper
                     echo json_encode(
                         array(
                             'success' => true,
-                            'message' => __('Success!', 'poi-mapper'),
+                            'message' => __('Success!', 'csv-to-db'),
                         )
                     );
                 }
@@ -267,7 +271,7 @@ class POIMapperAdmin extends POIMapper
     /**
      * Analyze CSV file by AJAX
      */
-    public function analyze_csv()
+    public function analyzeCsv()
     {
         header('Content-Type: application/json');
         try {
@@ -275,11 +279,11 @@ class POIMapperAdmin extends POIMapper
             if ($tmpFileName) {
                 $fp = fopen($tmpFileName, 'r');
                 if (!$fp) {
-                    throw new Exception(__('Cannot read from CSV', 'poi-mapper'));
+                    throw new Exception(__('Cannot read from CSV', 'csv-to-db'));
                 }
                 $fields = fgetcsv($fp, 0, $this->get_option('fields-terminated'), $this->get_option('fields-enclosed'), $this->get_option('fields-escaped'));
                 if (!count($fields)) {
-                    throw new Exception(__('Cannot detect fields', 'poi-mapper'));
+                    throw new Exception(__('Cannot detect fields', 'csv-to-db'));
                 } else {
                     // save fields
                     $fieldsData = array();
@@ -298,12 +302,12 @@ class POIMapperAdmin extends POIMapper
                         );
                     }
                     $this->options['fields'] = $fieldsData;
-                    update_option('poi-mapper', $this->options);
+                    update_option('csv-to-db', $this->options);
                     echo json_encode(
                         array(
                             'success' => true,
                             'data'    => $fields,
-                            'message' => __('Success! Reloading...', 'poi-mapper'),
+                            'message' => __('Success! Reloading...', 'csv-to-db'),
                         )
                     );
                 }
@@ -321,7 +325,7 @@ class POIMapperAdmin extends POIMapper
         wp_die();
     }
 
-    public function items_paginated()
+    public function getItems()
     {
         global $wpdb;
         $columns = $this->collectColumnsToShow($skipAutogenerated = true);
@@ -333,7 +337,7 @@ class POIMapperAdmin extends POIMapper
             }
             $order = filter_var($_POST['order'], FILTER_SANITIZE_STRING);
             $fields = array_column($columns, 'name');
-            $res = $wpdb->get_results('SELECT SQL_CALC_FOUND_ROWS `' . implode('`,`', $fields) . '` FROM `' . $wpdb->get_blog_prefix() . 'poi_mapper_items` LIMIT ' . "{$start}, {$limit}");
+            $res = $wpdb->get_results('SELECT SQL_CALC_FOUND_ROWS `' . implode('`,`', $fields) . '` FROM `' . $wpdb->get_blog_prefix() . self::TABLE_NAME . '` LIMIT ' . "{$start}, {$limit}");
             $total = $wpdb->get_var('SELECT FOUND_ROWS() AS total');
             $rows = $this->convertFields($columns, $res);
             header('Content-Type: application/json');
@@ -350,18 +354,46 @@ class POIMapperAdmin extends POIMapper
     /**
      * Save fields settings
      */
-    public function save_schema()
+    public function saveFields()
     {
-        $this->options['fields'] = $_POST['poi-mapper']['fields'];
-        update_option('poi-mapper', $this->options);
+        $this->options['fields'] = $_POST['csv-to-db']['fields'];
+        update_option('csv-to-db', $this->options);
+    }
+
+    /**
+     * Clear fields settings
+     */
+    public function clearFields()
+    {
+        $this->options['fields'] = array();
+        update_option('csv-to-db', $this->options);
+    }
+
+    /**
+     * Export fields to file
+     */
+    public function exportFields()
+    {
+        $this->saveFields();
+        $content = serialize($this->options['fields']);
+
+        header('Content-Type: text/plain; charset=' . get_option('blog_charset'), true);
+        header('Content-Disposition: attachment; filename="csv-to-db-fields.txt"');
+        header('Content-Length:' . strlen($content));
+        header('Cache-Control: public, must-revalidate, max-age=0');
+        header('Pragma: public');
+        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        echo $content;
+        exit();
     }
 
     /**
      * Export schema file
      */
-    public function export_schema()
+    public function exportSchema()
     {
-        $this->save_schema();
+        $this->saveFields();
         $createTable = $this->createSchema();
         $content = <<<EOC
 # Schema File v.1.0.0
@@ -371,12 +403,12 @@ class POIMapperAdmin extends POIMapper
 EOC;
 
         header('Content-Type: text/plain; charset=' . get_option('blog_charset'), true);
-        header('Content-Disposition: attachment; filename="poi-mapper-schema.sql"');
+        header('Content-Disposition: attachment; filename="csv-to-db-schema.sql"');
         header('Content-Length:' . strlen($content));
         header('Cache-Control: public, must-revalidate, max-age=0');
         header('Pragma: public');
         header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-        header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
         echo $content;
         exit();
     }
@@ -415,8 +447,10 @@ EOC;
     {
         global $wpdb;
 
-        $wpdb->query('DROP TABLE IF EXISTS ' . $wpdb->get_blog_prefix() . 'poi_mapper_items');
-        $wpdb->query($this->createSchema());
+        $this->saveFields();
+        $wpdb->query('DROP TABLE IF EXISTS `' . $wpdb->get_blog_prefix() . self::TABLE_NAME . '`');
+        $schema = $this->createSchema();
+        $wpdb->query($schema);
 
         return $wpdb->last_error !== '' ? $wpdb->last_error : true;
     }
@@ -450,7 +484,7 @@ EOC;
             $columns = array_merge($columns, $indexes);
         }
 
-        return 'CREATE TABLE IF NOT EXISTS ' . $wpdb->get_blog_prefix() . 'poi_mapper_items (' . implode(',', $columns) . ')';
+        return 'CREATE TABLE IF NOT EXISTS `' . $wpdb->get_blog_prefix() . self::TABLE_NAME . '` (' . implode(',', $columns) . ')';
     }
 
     /**
@@ -482,7 +516,7 @@ EOC;
         if (!empty($this->get_option('lines-terminated'))) {
             $lines_params[] = 'TERMINATED BY \'' . $this->get_option('lines-terminated') . '\'';
         }
-        $query = 'LOAD DATA ' . $use_local . ' INFILE \'' . $fileName . '\' INTO TABLE `' . $wpdb->get_blog_prefix() . 'poi_mapper_items`';
+        $query = 'LOAD DATA ' . $use_local . ' INFILE \'' . $fileName . '\' INTO TABLE `' . $wpdb->get_blog_prefix() . self::TABLE_NAME . '`';
         if (count($fields_params)) {
             $query .= ' FIELDS ' . implode(' ', $fields_params);
         }

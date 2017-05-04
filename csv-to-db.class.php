@@ -1,17 +1,43 @@
 <?php
 
-if (!class_exists('POIMapper')) {
+if (!class_exists('CSV2DB')) {
 
-    class POIMapper
+    class CSV2DB
     {
+        /**
+         * Full file system path to the main plugin file
+         *
+         * @since 3.0.0.0
+         * @var string
+         */
+        protected $plugin_file;
+
+        /**
+         * Path to the main plugin file relative to WP_CONTENT_DIR/plugins
+         *
+         * @since 3.0.0.0
+         * @var string
+         */
+        protected $plugin_basename;
+
+        /**
+         * Plugin slug to detect available updates
+         * @var string
+         */
+        protected $plugin_slug;
+
+        const TABLE_NAME = 'csv_to_db';
 
         protected $options = null;
 
         public function __construct()
         {
+            $this->plugin_file = __DIR__ . '/csv-to-db.php';
+            $this->plugin_basename = plugin_basename($this->plugin_file);
+            $this->plugin_slug = basename(__DIR__);
             $this->init();
             // set text domain
-            load_textdomain('poi-mapper', __DIR__ . '/lang/poi-mapper-' . get_locale() . '.mo');
+            load_textdomain('csv-to-db', __DIR__ . '/lang/csv-to-db-' . get_locale() . '.mo');
         }
 
         /**
@@ -22,9 +48,9 @@ if (!class_exists('POIMapper')) {
          */
         public function init()
         {
-            if (!($this->options = get_option('poi-mapper'))) {
+            if (!($this->options = get_option('csv-to-db'))) {
                 $this->options = $this->defaults();
-                add_option('poi-mapper', $this->options);
+                add_option('csv-to-db', $this->options);
             }
         }
 
@@ -43,7 +69,6 @@ if (!class_exists('POIMapper')) {
                 'fields-escaped'    => '\\\\',
                 'lines-starting'    => '',
                 'lines-terminated'  => '\\n',
-                'gmap-key'          => '',
                 'fields'            => array(),
             );
         }

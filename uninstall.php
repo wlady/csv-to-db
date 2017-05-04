@@ -5,7 +5,7 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
     die;
 }
 
-$option_name = 'poi-mapper';
+$option_name = 'csv-to-db';
 
 delete_option($option_name);
 

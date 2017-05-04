@@ -1,6 +1,6 @@
 <div class="wrap ">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php _e( 'POI Mapper Items' , 'poi-mapper' ); ?></h2>
+    <h2><?php _e( 'CSV to DB Items' , 'csv-to-db' ); ?></h2>
     <table id="table"
            data-toggle="table"
            data-ajax="ajaxRequest"
@@ -38,7 +38,7 @@
 
     // your custom ajax request here
     function ajaxRequest(params) {
-        params.data['action'] = 'items_paginated';
+        params.data['action'] = 'get_items';
         var jsonDataCall = jQuery.ajax({
             url: ajaxurl,
             method: "POST",
