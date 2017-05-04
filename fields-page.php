@@ -7,30 +7,9 @@
         </div>
     <?php endif; ?>
     <div id="output" class="updated hidden"></div>
-    <form action="" method="post" enctype="multipart/form-data" id="upload_form" onsubmit="return false">
-        <input type="hidden" name="action" value="analyze_csv" />
-        <h3><?php _e( 'Analyze CSV' , 'poi-mapper' ); ?></h3>
-        <table class="form-table">
-            <tr valign="top">
-                <td scope="row" width="200">
-                    <?php _e( 'CSV File' , 'poi-mapper' ); ?>
-                </td>
-                <td>
-                    <input name="file" type="file" />
-                </td>
-            </tr>
-        </table>
-        <p class="submit">
-            <img src="images/loading.gif" id="loading-img" style="display:none;" alt="Please Wait"/>
-            <input type="submit" class="button-primary" value="<?php _e( 'Analyze' , 'poi-mapper' ) ?>" id="upload_btn" />
-        </p>
-    </form>
-    <div id="progress-wrp" class="progress progress-striped active">
-        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
-    </div>
     <?php if (count($this->get_option('fields'))) : ?>
-        <form action="" method="post">
-            <input type="hidden" name="action" value="structure_db" />
+        <form action="" method="post" id="schema-table">
+            <input type="hidden" name="action" value="save_schema" />
             <h3><?php _e( 'Fields' , 'poi-mapper' ); ?></h3>
             <table class="form-table table table-striped">
                 <tr>
@@ -60,6 +39,9 @@
                     </th>
                     <th>
                         <?php _e( 'Align' , 'poi-mapper' ); ?>
+                    </th>
+                    <th>
+                        <?php _e( 'Check' , 'poi-mapper' ); ?>
                     </th>
                 </tr>
                 <?php foreach ($this->get_option('fields') as $key=>$field) : ?>
@@ -104,21 +86,71 @@
                         </td>
                         <td>
                             <select class="indexSelector" name="poi-mapper[fields][<?php echo $key; ?>][align]" style="width:100%" >
+                                <option></option>
                                 <option value="left" <?php if ($field['align']=='left') echo 'selected'; ?>><?php _e('Left', 'poi-mapper'); ?></option>
                                 <option value="center" <?php if ($field['align']=='center') echo 'selected'; ?>><?php _e('Center', 'poi-mapper'); ?></option>
                                 <option value="right" <?php if ($field['align']=='right') echo 'selected'; ?>><?php _e('Right', 'poi-mapper'); ?></option>
                             </select>
                         </td>
+                        <td>
+                            <input class="checkSelector" type="checkbox" name="poi-mapper[fields][<?php echo $key; ?>][check]" value="1" <?php echo $field['check']==1 ? 'checked="checked"' : ''; ?> onchange="checkOtherCheckboxs(<?php echo $key; ?>)" />
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
             <p class="submit">
-                <input type="submit" class="button-primary" value="<?php _e( 'Save Changes' , 'poi-mapper' ) ?>" id="upload_btn" />
+                <input type="submit" class="button-primary pull-left submitBtn" value="<?php _e( 'Save Changes' , 'poi-mapper' ) ?>" data-action="save_fields" data-toggle="tooltip" title="<?php _e( 'Save fields configuration' , 'poi-mapper' ) ?>" />
+                <input type="submit" class="button pull-left submitBtn" value="<?php _e( 'Export Fields' , 'poi-mapper' ) ?>" data-action="export_fields" data-toggle="tooltip" title="<?php _e( 'Export fields configuration' , 'poi-mapper' ) ?>" />
+                <input type="submit" class="button pull-left submitBtn" value="<?php _e( 'Import Fields' , 'poi-mapper' ) ?>" data-action="import_fields" data-toggle="tooltip" title="<?php _e( 'Import fields configuration' , 'poi-mapper' ) ?>" />
+                <input type="submit" class="button pull-left submitBtn" value="<?php _e( 'Clear Fields' , 'poi-mapper' ) ?>" data-action="clear_fields" data-toggle="tooltip" title="<?php _e( 'Clear fields' , 'poi-mapper' ) ?>" />
+                <input type="submit" class="button pull-right submitBtn" value="<?php _e( 'Create DB Table' , 'poi-mapper' ) ?>" data-action="create_table" data-toggle="tooltip" title="<?php _e( 'Create DB Table from current fields configuration' , 'poi-mapper' ) ?>" />
+                <input type="submit" class="button pull-right submitBtn" value="<?php _e( 'Import Schema' , 'poi-mapper' ) ?>" data-action="import_schema" data-toggle="tooltip" title="<?php _e( 'Import DB schema' , 'poi-mapper' ) ?>" />
+                <input type="submit" class="button pull-right submitBtn" value="<?php _e( 'Export Schema' , 'poi-mapper' ) ?>" data-action="export_schema" data-toggle="tooltip" title="<?php _e( 'Export DB schema' , 'poi-mapper' ) ?>" />
             </p>
         </form>
     <?php endif; ?>
+    <div class="clearfix"></div>
+    <form action="" method="post" enctype="multipart/form-data" id="upload_form" onsubmit="return false">
+        <input type="hidden" name="action" value="analyze_csv" />
+        <h3><?php _e( 'Analyze CSV' , 'poi-mapper' ); ?></h3>
+        <table class="form-table">
+            <tr valign="top">
+                <td scope="row" width="200">
+                    <?php _e( 'CSV File' , 'poi-mapper' ); ?>
+                </td>
+                <td>
+                    <input name="file" type="file" />
+                </td>
+            </tr>
+        </table>
+        <p class="submit">
+            <img src="images/loading.gif" id="loading-img" style="display:none;" alt="Please Wait"/>
+            <input type="submit" class="button-primary" value="<?php _e( 'Analyze' , 'poi-mapper' ) ?>" id="upload_btn" data-toggle="tooltip" title="<?php _e( 'Analyze CSV file and create the fields configuration' , 'poi-mapper' ) ?>" />
+        </p>
+    </form>
+    <div id="progress-wrp" class="progress progress-striped active">
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
+    </div>
 </div>
+<style>
+    .tooltip {
+        z-index: 10000;
+    }
+</style>
 <script>
+    jQuery(document).ready(function(){
+        jQuery('[data-toggle="tooltip"]').tooltip();
+    });
+    jQuery('.submitBtn').on('click', function() {
+        jQuery('input[name=action]').val(jQuery(this).data('action'));
+    });
+    function checkOtherCheckboxs(key) {
+        jQuery('.checkSelector').each(function(idx) {
+            if (idx!=key) {
+                jQuery(this).attr('checked', false);
+            }
+        });
+    }
     function checkIndex(val, key) {
         if (val=='PRIMARY') {
             jQuery('[name="poi-mapper[fields]['+key+'][type]"]').val('INT');

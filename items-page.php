@@ -4,43 +4,55 @@
     <table id="table"
            data-toggle="table"
            data-ajax="ajaxRequest"
-           data-height="400"
+           data-show-refresh="true"
+           data-show-columns="true"
+           data-show-export="true"
+           data-id-field="<?php echo $idField; ?>"
+           data-striped="true"
            data-side-pagination="server"
            data-pagination="true"
            data-page-list="[5, 10, 20, 50, 100, 200]"
-           data-search="true">
+           data-search="true"
+    >
         <thead>
         <tr>
             <?php foreach ($columns as $column) : ?>
-                <th data-field="<?php echo $column['name']; ?>" <?php if ($column['index']=='PRIMARY') : ?>data-checkbox="true"<?php endif; ?> style="text-align: <?php echo $column['align']; ?>;"><?php echo $column['title']; ?></th>
+                <th data-field="<?php echo $column['name']; ?>" <?php if (isset($column['check'])) : ?>data-checkbox="true"<?php endif; ?> data-align="<?php echo $column['align']; ?>"><?php echo $column['title']; ?></th>
             <?php endforeach; ?>
         </tr>
         </thead>
     </table>
 </div>
 <script>
-    var $table = jQuery('#table');
+    var $table = jQuery('#table'),
+        $remove = jQuery('#remove'),
+        selections;
+
+    $table.on('check.bs.table uncheck.bs.table ' +
+        'check-all.bs.table uncheck-all.bs.table', function () {
+        $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+        // save your data, here just save the current page
+        selections = getIdSelections();
+        // push or splice the selections if you want to save all data selections
+    });
 
     // your custom ajax request here
     function ajaxRequest(params) {
         params.data['action'] = 'items_paginated';
-        jQuery.post(ajaxurl, params.data, function(response) {
-            alert('Got this from the server: ' + response);
+        var jsonDataCall = jQuery.ajax({
+            url: ajaxurl,
+            method: "POST",
+            dataType: "json",
+            data: params.data,
+            success: function (response) {
+                params.success(response);
+            }
         });
-        /*
-        // data you need
-        console.log(params.data);
-        // just use setTimeout
-        setTimeout(function () {
-            params.success({
-                total: 100,
-                rows: [{
-                    "id": 0,
-                    "name": "Item 0",
-                    "price": "$0"
-                }]
-            });
-        }, 1000);
-        */
+    }
+
+    function getIdSelections() {
+        return jQuery.map($table.bootstrapTable('getSelections'), function (row) {
+            return row.id
+        });
     }
 </script>

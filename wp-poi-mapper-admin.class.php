@@ -37,6 +37,8 @@ class POIMapperAdmin extends POIMapper
      */
     protected $plugin_slug;
 
+    private $dataIdField = '';
+
     /**
      * Setup backend functionality in WordPress
      *
@@ -48,25 +50,19 @@ class POIMapperAdmin extends POIMapper
         $this->plugin_file = __DIR__ . '/wp-poi-mapper.php';
         $this->plugin_basename = plugin_basename($this->plugin_file);
         $this->plugin_slug = basename(__DIR__);
-        // Activation hook
+
         register_activation_hook($this->plugin_file, array($this, 'init'));
-        // Whitelist options
         add_action('admin_init', array($this, 'register_settings'));
-        // Activate the options page
-        add_action('admin_menu', array($this, 'add_page'));
-        // import CSV
+        add_action('admin_menu', array($this, 'add_page'), 11, 0);
         add_action('wp_ajax_import_csv', array($this, 'import_csv'));
         add_action('wp_ajax_analyze_csv', array($this, 'analyze_csv'));
         add_action('wp_ajax_items_paginated', array($this, 'items_paginated'));
 
-        wp_enqueue_style('poi_mapper_bootstrap', plugins_url('/bootstrap/css/bootstrap.min.css', __FILE__));
-        wp_enqueue_style('poi_mapper_bootstrap_table', plugins_url('/bootstrap-table/bootstrap-table.css', __FILE__));
-        wp_enqueue_script('poi_mapper_bootstrap_table', plugins_url('/bootstrap-table/bootstrap-table.js', __FILE__));
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
-            if ($_POST['action'] == 'structure_db') {
-                $this->structure_db();
-            }
-        }
+        wp_enqueue_style('poi_mapper_bootstrap_css', plugins_url('/bootstrap/css/bootstrap.min.css', __FILE__));
+        wp_enqueue_style('poi_mapper_bootstrap_table_css', plugins_url('/bootstrap-table/bootstrap-table.css', __FILE__));
+        wp_enqueue_script('poi_mapper_bootstrap_js', plugins_url('/bootstrap/js/bootstrap.min.js', __FILE__));
+        wp_enqueue_script('poi_mapper_bootstrap_table_js', plugins_url('/bootstrap-table/bootstrap-table.js', __FILE__));
+        wp_enqueue_script('poi_mapper_bootstrap_table_export_js', plugins_url('/bootstrap-table/extensions/export/bootstrap-table-export.min.js', __FILE__));
     }
 
     /**
@@ -78,6 +74,22 @@ class POIMapperAdmin extends POIMapper
     function register_settings()
     {
         register_setting('poi-mapper', 'poi-mapper', array($this, 'update'));
+    }
+
+    public function init()
+    {
+        parent::init();
+        // routing actions
+        if (isset($_POST['action'])) {
+            switch ($_POST['action']) {
+                case 'save_schema':
+                    $this->save_schema();
+                    break;
+                case 'export_schema':
+                    $this->export_schema();
+                    break;
+            }
+        }
     }
 
     /**
@@ -144,29 +156,24 @@ class POIMapperAdmin extends POIMapper
             _e(sprintf('<div id="message" class="updated error"><p>Fields undefined! Click <a href="%s">Fields</a> to prepare the fields.</p></div>', 'admin.php?page=wp-poi-mapper-fields'));
         } else {
             $maxFileSize = $this->convertBytes(ini_get('upload_max_filesize'));
-            if (!@include(dirname(__FILE__) . '/import-page.php')) {
-                _e(sprintf('<div id="message" class="updated fade"><p>The import page for the <strong>POI Mapper</strong> cannot be displayed.  The file <strong>%s</strong> is missing.  Please reinstall the plugin.</p></div>', dirname(__FILE__) . '/import-page.php'));
-            }
+            include('import-page.php');
         }
     }
 
     public function fields_page()
     {
         $maxFileSize = $this->convertBytes(ini_get('upload_max_filesize'));
-        if (!@include(dirname(__FILE__) . '/fields-page.php')) {
-            _e(sprintf('<div id="message" class="updated fade"><p>The fields page for the <strong>POI Mapper</strong> cannot be displayed.  The file <strong>%s</strong> is missing.  Please reinstall the plugin.</p></div>', dirname(__FILE__) . '/fields-page.php'));
-        }
+        include('fields-page.php');
     }
 
     public function items_page()
     {
         $columns = $this->collectColumnsToShow();
+        $idField = $this->dataIdField;
         if (!count($columns)) {
             _e(sprintf('<div id="message" class="updated error"><p>Columns undefined! Click <a href="%s">Fields</a> to prepare the fields.</p></div>', 'admin.php?page=wp-poi-mapper-fields'));
         } else {
-            if (!@include(dirname(__FILE__) . '/items-page.php')) {
-                _e(sprintf('<div id="message" class="updated fade"><p>The items page for the <strong>POI Mapper</strong> cannot be displayed.  The file <strong>%s</strong> is missing.  Please reinstall the plugin.</p></div>', dirname(__FILE__) . '/items-page.php'));
-            }
+            include('items-page.php');
         }
     }
 
@@ -287,6 +294,7 @@ class POIMapperAdmin extends POIMapper
                             'title' => '',
                             'show'  => 0,
                             'align' => '',
+                            'check' => 0,
                         );
                     }
                     $this->options['fields'] = $fieldsData;
@@ -313,17 +321,17 @@ class POIMapperAdmin extends POIMapper
         wp_die();
     }
 
-    /**
-     * Get items by AJAX
-     */
     public function items_paginated()
     {
         global $wpdb;
-        $columns = $this->collectColumnsToShow();
+        $columns = $this->collectColumnsToShow($skipAutogenerated = true);
         if (count($columns)) {
-            $start = filter_var($_POST['offset'], FILTER_SANITIZE_NUMBER_INT);
-            $limit = filter_var($_POST['limit'], FILTER_SANITIZE_NUMBER_INT);
-//            $order = filter_var($_POST['order'], FILTER_SANITIZE_STRING);
+            $start = (int)filter_var($_POST['offset'], FILTER_SANITIZE_NUMBER_INT);
+            $limit = (int)filter_var($_POST['limit'], FILTER_SANITIZE_NUMBER_INT);
+            if (!$limit) {
+                $limit = 10;
+            }
+            $order = filter_var($_POST['order'], FILTER_SANITIZE_STRING);
             $fields = array_column($columns, 'name');
             $res = $wpdb->get_results('SELECT SQL_CALC_FOUND_ROWS `' . implode('`,`', $fields) . '` FROM `' . $wpdb->get_blog_prefix() . 'poi_mapper_items` LIMIT ' . "{$start}, {$limit}");
             $total = $wpdb->get_var('SELECT FOUND_ROWS() AS total');
@@ -342,10 +350,35 @@ class POIMapperAdmin extends POIMapper
     /**
      * Save fields settings
      */
-    public function structure_db()
+    public function save_schema()
     {
         $this->options['fields'] = $_POST['poi-mapper']['fields'];
         update_option('poi-mapper', $this->options);
+    }
+
+    /**
+     * Export schema file
+     */
+    public function export_schema()
+    {
+        $this->save_schema();
+        $createTable = $this->createSchema();
+        $content = <<<EOC
+# Schema File v.1.0.0
+# Do not edit!!!
+{$createTable};
+
+EOC;
+
+        header('Content-Type: text/plain; charset=' . get_option('blog_charset'), true);
+        header('Content-Disposition: attachment; filename="poi-mapper-schema.sql"');
+        header('Content-Length:' . strlen($content));
+        header('Cache-Control: public, must-revalidate, max-age=0');
+        header('Pragma: public');
+        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+        echo $content;
+        exit();
     }
 
     /**
@@ -383,6 +416,15 @@ class POIMapperAdmin extends POIMapper
         global $wpdb;
 
         $wpdb->query('DROP TABLE IF EXISTS ' . $wpdb->get_blog_prefix() . 'poi_mapper_items');
+        $wpdb->query($this->createSchema());
+
+        return $wpdb->last_error !== '' ? $wpdb->last_error : true;
+    }
+
+    protected function createSchema()
+    {
+        global $wpdb;
+
         $columns = array();
         $indexes = array();
         foreach ($this->options['fields'] as $field) {
@@ -407,9 +449,8 @@ class POIMapperAdmin extends POIMapper
         if (count($indexes)) {
             $columns = array_merge($columns, $indexes);
         }
-        $wpdb->query('CREATE TABLE IF NOT EXISTS ' . $wpdb->get_blog_prefix() . 'poi_mapper_items (' . implode(',', $columns) . ')');
 
-        return $wpdb->last_error !== '' ? $wpdb->last_error : true;
+        return 'CREATE TABLE IF NOT EXISTS ' . $wpdb->get_blog_prefix() . 'poi_mapper_items (' . implode(',', $columns) . ')';
     }
 
     /**
@@ -456,37 +497,40 @@ class POIMapperAdmin extends POIMapper
         return $wpdb->last_error !== '' ? $wpdb->last_error : true;
     }
 
-    /**
-     * @return array
-     */
-    public function collectColumnsToShow()
+    public function collectColumnsToShow($skipAutogenerated = false)
     {
         $columns = array();
+        $checked = false;
         foreach ($this->options['fields'] as $field) {
             if (isset($field['show']) && !empty($field['title'])) {
                 $columns[] = $field;
+                if (isset($field['check'])) {
+                    $this->dataIdField = $field['name'];
+                    $checked = true;
+                }
             }
         }
-
         usort($columns, function ($a, $b) {
             return (isset($a['index']) && $a['index'] == 'PRIMARY') ? 0 : 1;
         });
+        if (!$skipAutogenerated && !$checked) {
+            array_unshift($columns, array(
+                'name'  => '_autogenerated_check_column',
+                'check' => true,
+            ));
+            $this->dataIdField = '_autogenerated_check_column';
+        }
 
         return $columns;
     }
 
-    /**
-     * @param array $columns
-     * @param array $records
-     * @return array
-     */
     public function convertFields($columns, $records)
     {
-        $rows = array_map(function($item) use ($columns) {
+        $rows = array_map(function ($item) use ($columns) {
             $row = (array)$item;
-            foreach ($row as $field=>$value) {
-                $column = array_filter($columns, function($col) use ($field) {
-                    return $col['name']==$field ? $col : null;
+            foreach ($row as $field => $value) {
+                $column = array_filter($columns, function ($col) use ($field) {
+                    return $col['name'] == $field ? $col : null;
                 });
                 $col = array_pop($column);
                 switch ($col['type']) {
@@ -501,6 +545,9 @@ class POIMapperAdmin extends POIMapper
                         $item->{$field} = (double)$value;
                         break;
                 }
+                if ($col['index'] == 'PRIMARY') {
+                    $item->id = (int)$value;
+                }
             }
             return $item;
         }, $records);
@@ -508,3 +555,18 @@ class POIMapperAdmin extends POIMapper
         return $rows;
     }
 }
+
+function _var_dump($var)
+{
+    ob_start();
+    print_r($var);
+    $v = ob_get_contents();
+    ob_end_clean();
+    return $v . PHP_EOL;
+}
+
+function flog($var)
+{
+    file_put_contents('/tmp/log.txt', '+---+ ' . date('H:i:s d-m-Y') . ' +-----+' . PHP_EOL . _var_dump($var) . PHP_EOL, FILE_APPEND);
+}
+
