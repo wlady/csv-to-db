@@ -75,7 +75,7 @@ class CSV2DBAdmin extends CSV2DB
     }
 
     /**
-     * Update/validate the options in the options table from the POST
+     * Update the options in the options table from the POST
      *
      * @since 3.0.0.1
      * @param mixed $options
@@ -83,19 +83,14 @@ class CSV2DBAdmin extends CSV2DB
      */
     public function update($options)
     {
+        if (count($this->options['fields'])) {
+            $options['fields'] = $this->options['fields'];
+        }
         if (!empty($_POST['csv-to-db-defaults'])) {
             $this->options = $this->defaults();
-        } else {
-            foreach ($this->defaults() as $key => $value) {
-                if (!isset ($options[$key])) {
-                    $options[$key] = $value;
-                }
-            }
-            if (count($this->options['fields'])) {
-                $options['fields'] = $this->options['fields'];
-            }
-            $this->options = $options;
         }
+        $this->options = $options;
+
         return $this->options;
     }
 
@@ -284,7 +279,7 @@ class CSV2DBAdmin extends CSV2DB
                     throw new Exception(__('Cannot read from CSV', 'csv-to-db'));
                 }
                 $fields = fgetcsv($fp, 0, $this->get_option('fields-terminated'), $this->get_option('fields-enclosed'), $this->get_option('fields-escaped'));
-                if (!count($fields)) {
+                if (!$fields || !count($fields)) {
                     throw new Exception(__('Cannot detect fields', 'csv-to-db'));
                 } else {
                     // save fields

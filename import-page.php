@@ -31,7 +31,7 @@
                     <?php _e( 'Re-Create table' , 'csv-to-db' ); ?>
                 </td>
                 <td>
-                    <input type="checkbox" name="re-create" value="1" />
+                    <input type="checkbox" name="re-create" value="1" checked="checked" />
                 </td>
             </tr>
         </table>
