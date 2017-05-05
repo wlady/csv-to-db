@@ -64,12 +64,14 @@ class CSV2DBAdmin extends CSV2DB
         add_action('wp_ajax_analyze_csv', array($this, 'analyzeCsv'));
         add_action('wp_ajax_get_items', array($this, 'getItems'));
 
-        wp_enqueue_style('poi_mapper_bootstrap_css', plugins_url('/bootstrap/css/bootstrap.min.css', __FILE__));
-        wp_enqueue_style('poi_mapper_bootstrap_table_css', plugins_url('/bootstrap-table/bootstrap-table.css', __FILE__));
-        wp_enqueue_script('poi_mapper_bootstrap_js', plugins_url('/bootstrap/js/bootstrap.min.js', __FILE__));
-        wp_enqueue_script('poi_mapper_bootstrap_table_js', plugins_url('/bootstrap-table/bootstrap-table.js', __FILE__));
-        wp_enqueue_script('poi_mapper_bootstrap_table_export_js', plugins_url('/bootstrap-table/extensions/export/bootstrap-table-export.min.js', __FILE__));
-        wp_enqueue_script('poi_mapper_bootstrap_table_export_addon_js', plugins_url('/bootstrap-table/tableExport.min.js', __FILE__));
+        wp_enqueue_style('csv_to_db_bootstrap_css', plugins_url('/assets/bootstrap/css/bootstrap.min.css', __FILE__));
+        wp_enqueue_style('csv_to_db_bootstrap_table_css', plugins_url('/assets/bootstrap-table/bootstrap-table.css', __FILE__));
+        wp_enqueue_style('csv_to_db_css', plugins_url('/assets/style.css', __FILE__));
+        wp_enqueue_script('csv_to_db_bootstrap_js', plugins_url('/assets/bootstrap/js/bootstrap.min.js', __FILE__));
+        wp_enqueue_script('csv_to_db_bootstrap_table_js', plugins_url('/assets/bootstrap-table/bootstrap-table.js', __FILE__));
+        wp_enqueue_script('csv_to_db_bootstrap_table_export_js', plugins_url('/assets/bootstrap-table/extensions/export/bootstrap-table-export.min.js', __FILE__));
+        wp_enqueue_script('csv_to_db_table_export_addon_js', plugins_url('/assets/tableExport.min.js', __FILE__));
+        wp_enqueue_script('csv_to_db_utilities_js', plugins_url('/assets/utilities.js', __FILE__));
     }
 
     /**
@@ -238,7 +240,7 @@ class CSV2DBAdmin extends CSV2DB
             $tmpFileName = $this->uploadFile();
             if ($tmpFileName) {
                 if (isset($_POST['re-create'])) {
-                    $res = $this->createTable();
+                    $res = $this->createTable($saveFields = false);
                     if (is_string($res)) {
                         throw new Exception(htmlspecialchars($res, ENT_QUOTES));
                     }
@@ -441,15 +443,21 @@ EOC;
 
     /**
      * Create DB table from saved fields settings
-     * @return mix On error returns error message
+     * @return string/bool On error returns error message
      */
-    protected function createTable()
+    protected function createTable($saveFields = true)
     {
         global $wpdb;
 
-        $this->saveFields();
+        if ($saveFields) {
+            $this->saveFields();
+        }
         $wpdb->query('DROP TABLE IF EXISTS `' . $wpdb->get_blog_prefix() . self::TABLE_NAME . '`');
-        $schema = $this->createSchema();
+        try {
+            $schema = $this->createSchema();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
         $wpdb->query($schema);
 
         return $wpdb->last_error !== '' ? $wpdb->last_error : true;
@@ -482,6 +490,9 @@ EOC;
         }
         if (count($indexes)) {
             $columns = array_merge($columns, $indexes);
+        }
+        if (!count($columns)) {
+            throw new Exception(__('Column configuration is empty', 'csv-to-db'));
         }
 
         return 'CREATE TABLE IF NOT EXISTS `' . $wpdb->get_blog_prefix() . self::TABLE_NAME . '` (' . implode(',', $columns) . ')';
@@ -603,4 +614,3 @@ function flog($var)
 {
     file_put_contents('/tmp/log.txt', '+---+ ' . date('H:i:s d-m-Y') . ' +-----+' . PHP_EOL . _var_dump($var) . PHP_EOL, FILE_APPEND);
 }
-
