@@ -1,15 +1,25 @@
 <?php
 /**
  * Plugin Name: CSV to DB
- * Description: This plugin allows to import/export lists in various formats
+ * Description: You can import CSV into  import/export lists in various formats and is built with micro-MVC engine
  * Version: 1.0.0
  * Author: Vladimir Zabara <wlady2001@gmail.com>
  */
 
-include('csv-to-db.class.php');
-if ( is_admin () ) {
-	include('csv-to-db-admin.class.php');
-    $plugin = new CSV2DBAdmin();
-} else {
-	new CSV2DB();
+namespace CSV2DB;
+
+if ( ! defined( 'WPINC' ) ) {
+    die;
 }
+
+include __DIR__ . '/app/autoload.php';
+
+$config = array(
+    'plugin_file'     => __FILE__,
+    'plugin_basename' => \plugin_basename(__FILE__),
+    'plugin_slug'     => basename(__DIR__),
+    'plugin_app'      => __DIR__ . '/app',
+);
+
+$plugin = new Engine\Base($config);
+$plugin->init();

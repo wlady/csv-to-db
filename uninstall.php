@@ -1,18 +1,15 @@
-
 <?php
+
+namespace CSV2DB;
+
+use CSV2DB\Engine\Options;
+use CSV2DB\Models\Table;
 
 if (!defined('WP_UNINSTALL_PLUGIN')) {
     die;
 }
 
-$option_name = 'csv-to-db';
+include __DIR__ . '/app/autoload.php';
 
-delete_option($option_name);
-
-// for site options in Multisite
-delete_site_option($option_name);
-
-// drop a custom database table
-global $wpdb;
-$wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}poi_mapper_items");
-$wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}poi_mapper_filters");
+Options::purgeOptions();
+Table::dropTables();

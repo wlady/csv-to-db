@@ -7,7 +7,7 @@
            data-show-refresh="true"
            data-show-columns="true"
            data-show-export="true"
-           data-id-field="<?php echo $idField; ?>"
+           data-id-field="<?php echo $this->data_id_field; ?>"
            data-striped="true"
            data-side-pagination="server"
            data-pagination="true"
@@ -16,7 +16,7 @@
     >
         <thead>
         <tr>
-            <?php foreach ($columns as $column) : ?>
+            <?php foreach ($data['columns'] as $column) : ?>
                 <th data-field="<?php echo $column['name']; ?>" <?php if (isset($column['check'])) : ?>data-checkbox="true"<?php endif; ?> data-align="<?php echo $column['align']; ?>"><?php echo $column['title']; ?></th>
             <?php endforeach; ?>
         </tr>
@@ -31,9 +31,7 @@
     $table.on('check.bs.table uncheck.bs.table ' +
         'check-all.bs.table uncheck-all.bs.table', function () {
         $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
-        // save your data, here just save the current page
         selections = getIdSelections();
-        // push or splice the selections if you want to save all data selections
     });
 
     // your custom ajax request here

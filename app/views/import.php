@@ -1,8 +1,8 @@
 <div class="wrap ">
     <h2><?php _e( 'CSV to DB' , 'csv-to-db' ); ?></h2>
-    <?php if ($message) : ?>
+    <?php if ($this->message) : ?>
         <div class="updated <?php if ($error) echo 'error'; ?>">
-            <p><?php _e($message); ?></p>
+            <p><?php _e($this->message); ?></p>
         </div>
     <?php endif; ?>
     <div id="output" class="updated hidden"></div>
@@ -54,7 +54,7 @@
         wait: "<?php _e('Please Wait...', 'csv-to-db'); ?>"
     };
 
-    var max_file_size 			= <?php echo $maxFileSize; ?>; //allowed file size. (1 MB = 1048576)
+    var max_file_size 			= <?php echo $this->upload_max_filesize; ?>; //allowed file size. (1 MB = 1048576)
     var allowed_file_types 		= ['text/csv','text/plain']; //allowed file types
     var result_output 			= '#output'; //ID of an element for response output
     var total_files_allowed 	= 1; //Number files allowed to upload
@@ -67,14 +67,6 @@
     jQuery(document).ready(function(){
         jQuery('[data-toggle="tooltip"]').tooltip();
     });
-
-    var max_file_size 			= <?php echo $maxFileSize; ?>; //allowed file size. (1 MB = 1048576)
-    var allowed_file_types 		= ['text/csv','application/csv']; //allowed file types
-    var result_output 			= '#output'; //ID of an element for response output
-    var my_form_id 				= '#upload_form'; //ID of an element for response output
-    var my_button_id 			= '#upload_btn';
-    var total_files_allowed 	= 1; //Number files allowed to upload
-    var progress_bar 		    = '.progress-bar'; //ID of an element for response output
 
     jQuery('#upload_btn').on( "click", function(event) {
         event.preventDefault();

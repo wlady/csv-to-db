@@ -1,9 +1,9 @@
 <div class="wrap ">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php _e( 'CSV to DB' , 'csv-to-db' ); ?></h2>
-    <?php if ($message) : ?>
+    <?php if ($this->message) : ?>
         <div class="updated <?php if ($error) echo 'error'; ?>">
-            <p><?php _e($message); ?></p>
+            <p><?php _e($this->message); ?></p>
         </div>
     <?php endif; ?>
     <div id="output" class="updated hidden"></div>
@@ -103,7 +103,6 @@
                 <input type="submit" class="button pull-left submitBtn" value="<?php _e( 'Export Fields' , 'csv-to-db' ) ?>" data-action="export_fields" data-toggle="tooltip" title="<?php _e( 'Export fields configuration' , 'csv-to-db' ) ?>" />
                 <input type="submit" class="button pull-left submitBtn" value="<?php _e( 'Clear Fields' , 'csv-to-db' ) ?>" data-action="clear_fields" data-toggle="tooltip" title="<?php _e( 'Clear fields' , 'csv-to-db' ) ?>" />
                 <input type="submit" class="button pull-right submitBtn" value="<?php _e( 'Create DB Table' , 'csv-to-db' ) ?>" data-action="create_table" data-toggle="tooltip" title="<?php _e( 'Create DB Table from current fields configuration' , 'csv-to-db' ) ?>" />
-                <input type="submit" class="button pull-right submitBtn" value="<?php _e( 'Import Schema' , 'csv-to-db' ) ?>" data-action="import_schema" data-toggle="tooltip" title="<?php _e( 'Import DB schema' , 'csv-to-db' ) ?>" />
                 <input type="submit" class="button pull-right submitBtn" value="<?php _e( 'Export Schema' , 'csv-to-db' ) ?>" data-action="export_schema" data-toggle="tooltip" title="<?php _e( 'Export DB schema' , 'csv-to-db' ) ?>" />
             </p>
         </form>
@@ -164,7 +163,7 @@
         wait: "<?php _e('Please Wait...', 'csv-to-db'); ?>"
     };
 
-    var max_file_size 			= <?php echo $maxFileSize; ?>; //allowed file size. (1 MB = 1048576)
+    var max_file_size 			= <?php echo $this->upload_max_filesize; ?>; //allowed file size. (1 MB = 1048576)
     var allowed_file_types 		= ['text/csv','text/plain']; //allowed file types
     var result_output 			= '#output'; //ID of an element for response output
     var total_files_allowed 	= 1; //Number files allowed to upload

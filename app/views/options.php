@@ -1,5 +1,4 @@
 <div class="wrap ">
-    <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php _e( 'CSV to DB' , 'csv-to-db' ); ?></h2>
     <form action="options.php" method="post">
         <?php settings_fields ( 'csv-to-db' ); ?>
