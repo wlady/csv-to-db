@@ -64,6 +64,7 @@ class Admin extends Options
 
     public function init()
     {
+        // init hooks
         foreach($this->hooks as $hook) {
             $parts = explode('_', $hook);
             $parts[] = 'hook';
@@ -72,11 +73,11 @@ class Admin extends Options
                 \add_action($hook, array($this, $method));
             }
         }
-
+        // enqueue styles
         foreach ($this->styles as $style) {
             \wp_enqueue_style(md5($style), \plugins_url($style, $this->config['plugin_basename']));
         }
-
+        // enqueue scripts
         foreach ($this->scripts as $script) {
             \wp_enqueue_script(md5($script), \plugins_url($script, $this->config['plugin_basename']));
         }
@@ -88,6 +89,7 @@ class Admin extends Options
      */
     public function dispatch($action)
     {
+        // route POST requests
         if (in_array($action, $this->actions)) {
             $parts = explode('_', $action);
             $parts[] = 'action';
@@ -103,6 +105,7 @@ class Admin extends Options
     /**
      * Whitelist the csv-to-db options
      *
+     * @Hook admin_init
      * @since 3.0.0.1
      * @return none
      */
@@ -114,8 +117,9 @@ class Admin extends Options
     /**
      * Add the options page
      *
-     * @return none
+     * @Hook admin_menu
      * @since 2.0.3
+     * @return none
      */
     public function adminMenuHook()
     {
@@ -129,6 +133,8 @@ class Admin extends Options
 
     /**
      * Import CSV file by AJAX
+     *
+     * @Hook wp_ajax_import_csv
      */
     public function wpAjaxImportCsvHook()
     {
@@ -168,6 +174,8 @@ class Admin extends Options
 
     /**
      * Analyze CSV file by AJAX
+     *
+     * @Hook wp_ajax_analyze_csv
      */
     public function wpAjaxAnalyzeCsvHook()
     {
@@ -224,6 +232,8 @@ class Admin extends Options
 
     /**
      * Get items by AJAX
+     *
+     * @Hook wp_ajax_get_items
      */
     public function wpAjaxGetItemsHook()
     {
@@ -249,9 +259,9 @@ class Admin extends Options
     }
 
     /**
-     * Output the options page
+     * Show the options page via admin menu
      *
-     * @return none
+     * @Slug wp-csv-to-db-settings
      */
     public function optionsPageAction()
     {
@@ -259,7 +269,9 @@ class Admin extends Options
     }
 
     /**
-     * Output the import page
+     * Show the import page via admin menu
+     *
+     * @Slug wp-csv-to-db-import
      */
     public function importPageAction()
     {
@@ -272,7 +284,9 @@ class Admin extends Options
     }
 
     /**
-     * Output the fields page
+     * Show the fields page via admin menu
+     *
+     * @Slug wp-csv-to-db-fields
      */
     public function fieldsPageAction()
     {
@@ -280,7 +294,9 @@ class Admin extends Options
     }
 
     /**
-     * Output the items page
+     * Show the items page via admin menu
+     *
+     * @Slug wp-csv-to-db
      */
     public function itemsPageAction()
     {

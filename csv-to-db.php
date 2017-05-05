@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: CSV to DB
- * Description: You can import CSV into  import/export lists in various formats and is built with micro-MVC engine
+ * Description: You can import/export lists in various formats. Plugin is built with micro-MVC engine.
  * Version: 1.0.0
  * Author: Vladimir Zabara <wlady2001@gmail.com>
  */
