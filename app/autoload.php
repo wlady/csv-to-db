@@ -8,9 +8,7 @@ function csv_to_db_autoload($class_name)
         return;
     }
 
-    // Split the class name into an array to read the namespace and class.
     $file_parts = explode( '\\', $class_name );
-    // Do a reverse loop through $file_parts to build the path to the file.
     foreach ($file_parts as $index=>$part) {
         $current = strtolower($part);
         $current = str_ireplace( '_', '-', $current );
@@ -22,11 +20,8 @@ function csv_to_db_autoload($class_name)
             $file_name = "$current.php";
         }
     }
-    // Now build a path to the file using mapping to the file location.
-    $filepath  = dirname(__DIR__) . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR;
-    $filepath .= $file_name;
+    $filepath  = dirname(__DIR__) . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR . $file_name;
 
-    // If the file exists in the specified path, then include it.
     if ( file_exists( $filepath ) ) {
         include_once( $filepath );
     } else {
