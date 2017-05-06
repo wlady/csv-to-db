@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: CSV to DB
- * Description: You can import/export lists in various formats. Plugin is built with micro-MVC engine.
+ * Description: Demo plugin is built with micro-MVC engine.
  * Version: 1.0.0
  * Author: Vladimir Zabara <wlady2001@gmail.com>
  */
 
 namespace CSV2DB;
 
-if ( ! defined( 'WPINC' ) ) {
+if (!defined('WPINC')) {
     die;
 }
 
@@ -18,7 +18,7 @@ $config = array(
     'plugin_file'     => __FILE__,
     'plugin_basename' => \plugin_basename(__FILE__),
     'plugin_slug'     => basename(__DIR__),
-    'plugin_dir'      => __DIR__ ,
+    'plugin_dir'      => __DIR__,
 );
 
 $plugin = new Engine\Base($config);

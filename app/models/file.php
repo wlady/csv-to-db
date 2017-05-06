@@ -8,7 +8,8 @@
 
 namespace CSV2DB\Models;
 
-class File {
+class File
+{
     /**
      * Upload file by AJAX
      * @return string/void If not requested by AJAX

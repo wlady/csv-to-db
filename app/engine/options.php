@@ -89,7 +89,8 @@ class Options extends Base
     /**
      * Called on uninstall
      */
-    public static function purgeOptions() {
+    public static function purgeOptions()
+    {
         \delete_option(self::OPTIONS_NAME);
         \delete_site_option(self::OPTIONS_NAME);
     }
