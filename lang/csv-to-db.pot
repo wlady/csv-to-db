@@ -1,0 +1,287 @@
+# Copyright (C) 2017 CSV to DB
+# This file is distributed under the same license as the CSV to DB package.
+msgid ""
+msgstr ""
+"Project-Id-Version: CSV to DB 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/csv-to-db\n"
+"POT-Creation-Date: 2017-05-06 14:27:54+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#. #-#-#-#-#  csv-to-db.pot (CSV to DB 1.0.0)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: app/controllers/admin.php:127 app/views/error.php:2 app/views/fields.php:3
+#: app/views/import.php:2 app/views/options.php:2
+msgid "CSV to DB"
+msgstr ""
+
+#: app/controllers/admin.php:128 app/views/fields.php:126
+#: app/views/import.php:39 app/views/import.php:49
+msgid "Import"
+msgstr ""
+
+#: app/controllers/admin.php:129 app/views/fields.php:13
+msgid "Fields"
+msgstr ""
+
+#: app/controllers/admin.php:130
+msgid "Settings"
+msgstr ""
+
+#: app/controllers/admin.php:156 app/controllers/admin.php:327
+msgid "Success!"
+msgstr ""
+
+#: app/controllers/admin.php:182
+msgid "Cannot read from CSV"
+msgstr ""
+
+#: app/controllers/admin.php:186
+msgid "Cannot detect fields"
+msgstr ""
+
+#: app/controllers/admin.php:209
+msgid "Success! Reloading..."
+msgstr ""
+
+#: app/controllers/admin.php:270
+msgid ""
+"Fields undefined! Click <a href=\"admin.php?page=wp-csv-to-db-fields"
+"\">Fields</a> to prepare the fields."
+msgstr ""
+
+#: app/controllers/admin.php:296
+msgid ""
+"Columns undefined! Click <a href=\"admin.php?page=wp-csv-to-db-fields"
+"\">Fields</a> to prepare the fields."
+msgstr ""
+
+#: app/models/file.php:25 app/views/fields.php:162 app/views/import.php:53
+msgid "File size is too big!"
+msgstr ""
+
+#: app/models/file.php:35 app/views/fields.php:160 app/views/import.php:51
+msgid "Unsupported File!"
+msgstr ""
+
+#: app/models/file.php:47
+msgid "Error uploading File!"
+msgstr ""
+
+#: app/models/file.php:50
+msgid "Something wrong with upload! Is \"upload_max_filesize\" set correctly?"
+msgstr ""
+
+#: app/models/table.php:68
+msgid "Column configuration is empty"
+msgstr ""
+
+#: app/views/fields.php:17
+msgid "Name"
+msgstr ""
+
+#: app/views/fields.php:20
+msgid "Type"
+msgstr ""
+
+#: app/views/fields.php:23
+msgid "Size"
+msgstr ""
+
+#: app/views/fields.php:26
+msgid "Null"
+msgstr ""
+
+#: app/views/fields.php:29
+msgid "AI"
+msgstr ""
+
+#: app/views/fields.php:32
+msgid "Index"
+msgstr ""
+
+#: app/views/fields.php:35
+msgid "Title"
+msgstr ""
+
+#: app/views/fields.php:38
+msgid "Show"
+msgstr ""
+
+#: app/views/fields.php:41
+msgid "Align"
+msgstr ""
+
+#: app/views/fields.php:44
+msgid "Check"
+msgstr ""
+
+#: app/views/fields.php:90
+msgid "Left"
+msgstr ""
+
+#: app/views/fields.php:91
+msgid "Center"
+msgstr ""
+
+#: app/views/fields.php:92
+msgid "Right"
+msgstr ""
+
+#: app/views/fields.php:102 app/views/options.php:57
+msgid "Save Changes"
+msgstr ""
+
+#: app/views/fields.php:102
+msgid "Save fields configuration"
+msgstr ""
+
+#: app/views/fields.php:103
+msgid "Export Fields"
+msgstr ""
+
+#: app/views/fields.php:103
+msgid "Export fields configuration"
+msgstr ""
+
+#: app/views/fields.php:104
+msgid "Clear Fields"
+msgstr ""
+
+#: app/views/fields.php:104
+msgid "Clear fields"
+msgstr ""
+
+#: app/views/fields.php:105
+msgid "Create DB Table"
+msgstr ""
+
+#: app/views/fields.php:105
+msgid "Create DB Table from current fields configuration"
+msgstr ""
+
+#: app/views/fields.php:106
+msgid "Export Schema"
+msgstr ""
+
+#: app/views/fields.php:106
+msgid "Export DB schema"
+msgstr ""
+
+#: app/views/fields.php:114
+msgid "Import Fields"
+msgstr ""
+
+#: app/views/fields.php:118
+msgid "Data File"
+msgstr ""
+
+#: app/views/fields.php:126
+msgid "Import fields configuration"
+msgstr ""
+
+#: app/views/fields.php:136
+msgid "Analyze CSV"
+msgstr ""
+
+#: app/views/fields.php:140 app/views/import.php:15
+msgid "CSV File"
+msgstr ""
+
+#: app/views/fields.php:148
+msgid "Analyze"
+msgstr ""
+
+#: app/views/fields.php:148
+msgid "Analyze CSV file and create the fields configuration"
+msgstr ""
+
+#: app/views/fields.php:157 app/views/import.php:48
+msgid "Are you sure?"
+msgstr ""
+
+#: app/views/fields.php:158
+msgid "Upload"
+msgstr ""
+
+#: app/views/fields.php:159 app/views/import.php:50
+msgid "Your browser does not support new File API! Please upgrade."
+msgstr ""
+
+#: app/views/fields.php:161 app/views/import.php:52
+msgid "Limit Exceeded!"
+msgstr ""
+
+#: app/views/fields.php:163 app/views/import.php:54
+msgid "Please Wait..."
+msgstr ""
+
+#: app/views/import.php:11
+msgid "CSV Import"
+msgstr ""
+
+#: app/views/import.php:23
+msgid "Skip first rows"
+msgstr ""
+
+#: app/views/import.php:31
+msgid "Re-Create table"
+msgstr ""
+
+#: app/views/import.php:39
+msgid "Import CSV file"
+msgstr ""
+
+#: app/views/items.php:3
+msgid "CSV to DB Items"
+msgstr ""
+
+#: app/views/options.php:5
+msgid "CSV Import Options"
+msgstr ""
+
+#: app/views/options.php:9
+msgid "Use LOCAL"
+msgstr ""
+
+#: app/views/options.php:17
+msgid "Fields Terminated By"
+msgstr ""
+
+#: app/views/options.php:25
+msgid "Fields Enclosed By"
+msgstr ""
+
+#: app/views/options.php:33
+msgid "Fields Escaped By"
+msgstr ""
+
+#: app/views/options.php:41
+msgid "Lines Starting By"
+msgstr ""
+
+#: app/views/options.php:49
+msgid "Lines Terminated By"
+msgstr ""
+
+#: app/views/options.php:58
+msgid "Reset to Defaults"
+msgstr ""
+
+#: app/views/options.php:64
+msgid "Are you sure to reset CSV to DB settings?"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"You can import/export lists in various formats. Plugin is built with micro-"
+"MVC engine."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Vladimir Zabara <wlady2001@gmail.com>"
+msgstr ""

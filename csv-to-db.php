@@ -18,7 +18,7 @@ $config = array(
     'plugin_file'     => __FILE__,
     'plugin_basename' => \plugin_basename(__FILE__),
     'plugin_slug'     => basename(__DIR__),
-    'plugin_app'      => __DIR__ . '/app',
+    'plugin_dir'      => __DIR__ ,
 );
 
 $plugin = new Engine\Base($config);

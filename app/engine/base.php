@@ -12,7 +12,7 @@ class Base
     public function __construct($config)
     {
         $this->config = $config;
-        \load_textdomain('csv-to-db', __DIR__ . '/lang/csv-to-db-' . \get_locale() . '.mo');
+        \load_textdomain('csv-to-db', $this->config['plugin_dir'] . '/lang/csv-to-db-' . \get_locale() . '.mo');
     }
 
     public function init()
@@ -31,7 +31,7 @@ class Base
     public function load_view($view, $data = null)
     {
         ob_start();
-        include_once($this->config['plugin_app'] . '/views/' . $view . '.php');
+        include_once($this->config['plugin_dir'] . '/app/views/' . $view . '.php');
         $content = ob_get_contents();
         ob_end_flush();
 
