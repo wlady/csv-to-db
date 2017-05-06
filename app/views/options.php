@@ -55,12 +55,12 @@
         </table>
         <p class="submit">
             <input type="submit" class="button-primary" value="<?php _e( 'Save Changes' , 'csv-to-db' ) ?>" />
-            <input type="submit" name="csv-to-db-defaults" id="wp-csv-to-db-defaults" class="button-primary" value="<?php _e( 'Reset to Defaults' , 'csv-to-db' ) ?>" onclick="return confirmResetPoiMapperData()" />
+            <input type="submit" name="csv-to-db-defaults" id="wp-csv-to-db-defaults" class="button-primary" value="<?php _e( 'Reset to Defaults' , 'csv-to-db' ) ?>" onclick="return confirmResetCSV2DB()" />
         </p>
     </form>
 </div>
 <script>
-    function confirmResetPoiMapperData() {
+    function confirmResetCSV2DB() {
         return confirm("<?php _e( 'Are you sure to reset CSV to DB settings?' , 'csv-to-db' ) ?>");
     }
 </script>
