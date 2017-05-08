@@ -62,7 +62,7 @@ class Admin extends Options {
 	public function init() {
 		// initialize hooks
 		foreach ( $this->hooks as $hook ) {
-			$method  = $hook . '_hook';
+			$method = $hook . '_hook';
 			if ( method_exists( $this, $method ) ) {
 				\add_action( $hook, array( $this, $method ) );
 			}
@@ -85,7 +85,7 @@ class Admin extends Options {
 	public function dispatch( $action ) {
 		// route POST requests
 		if ( in_array( $action, $this->actions ) ) {
-			$method  = $action . '_action';
+			$method = $action . '_action';
 			if ( method_exists( $this, $method ) ) {
 				$this->$method();
 			} else {
@@ -186,22 +186,11 @@ class Admin extends Options {
 					throw new \Exception( \__( 'Cannot detect fields', 'csv-to-db' ) );
 				} else {
 					// save fields
-					$fieldsData = array();
+					$fields_data = array();
 					foreach ( $fields as $field ) {
-						$fieldsData[] = array(
-							'name'  => $field,
-							'type'  => 'VARCHAR',
-							'size'  => '255',
-							'null'  => 0,
-							'ai'    => 0,
-							'index' => '',
-							'title' => '',
-							'show'  => 0,
-							'align' => '',
-							'check' => 0,
-						);
+						$fields_data[] = $this->generate_empty_field( $field );
 					}
-					$this->options['fields'] = $fieldsData;
+					$this->options['fields'] = $fields_data;
 					\update_option( 'csv-to-db', $this->options );
 					$results = array(
 						'success' => true,

@@ -42,6 +42,26 @@ class Options extends Base {
 	}
 
 	/**
+	 * Return the empty field
+	 *
+	 * @return array
+	 */
+	protected function generate_empty_field( $field_name ) {
+		return array(
+			'name'  => $field_name,
+			'type'  => 'VARCHAR',
+			'size'  => 255,
+			'null'  => 0,
+			'ai'    => 0,
+			'index' => '',
+			'title' => '',
+			'show'  => 0,
+			'align' => '',
+			'check' => 0,
+		);
+	}
+
+	/**
 	 * Called on uninstall
 	 */
 	public static function purge_options() {
