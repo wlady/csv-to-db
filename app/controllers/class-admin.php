@@ -12,23 +12,19 @@ use CSV2DB\Engine\Options;
 use CSV2DB\Models;
 
 class Admin extends Options {
-	// Every POST action has related method
 	protected $upload_max_filesize = 0;
-
-	// Every hook has related method
+	// used in Bootstrap Table
 	protected $data_id_field = '';
-
-	// Styles to enqueue (related to plugin directory)
+	// Every POST action has related method
 	private $actions = array(
-		'save_fields', // save_fields_cction etc
+		'save_fields', // save_fields_action etc
 		'export_schema',
 		'create_table',
 		'clear_fields',
 		'export_fields',
 		'import_fields',
 	);
-
-	// Scripts to enqueue (related to plugin directory)
+	// Every hook has related method
 	private $hooks = array(
 		'admin_init', // admin_init_hook etc
 		'admin_menu',
@@ -36,11 +32,13 @@ class Admin extends Options {
 		'wp_ajax_analyze_csv',
 		'wp_ajax_get_items',
 	);
+	// Styles to enqueue (related to plugin directory)
 	private $styles = array(
 		'/assets/bootstrap/css/bootstrap.min.css',
 		'/assets/bootstrap-table/bootstrap-table.css',
 		'/assets/style.css',
 	);
+	// Scripts to enqueue (related to plugin directory)
 	private $scripts = array(
 		'/assets/bootstrap/js/bootstrap.min.js',
 		'/assets/bootstrap-table/bootstrap-table.js',
@@ -49,11 +47,6 @@ class Admin extends Options {
 		'/assets/utilities.js',
 	);
 
-	/**
-	 * Setup backend functionality in WordPress
-	 *
-	 * @since 3.0.0.0
-	 */
 	public function __construct( $config ) {
 		parent::__construct( $config );
 		$this->upload_max_filesize = Models\File::convert_bytes( ini_get( 'upload_max_filesize' ) );
@@ -98,7 +91,6 @@ class Admin extends Options {
 	 * Whitelist the csv-to-db options
 	 *
 	 * @Hook admin_init
-	 * @since 3.0.0.1
 	 * @return none
 	 */
 	public function admin_init_hook() {
@@ -109,7 +101,6 @@ class Admin extends Options {
 	 * Add the options page
 	 *
 	 * @Hook admin_menu
-	 * @since 2.0.3
 	 * @return none
 	 */
 	public function admin_menu_hook() {

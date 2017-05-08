@@ -27,7 +27,6 @@ class Options extends Base {
 	 * Return the default options
 	 *
 	 * @return array
-	 * @since 2.0.3
 	 */
 	protected function defaults() {
 		return array(
@@ -75,7 +74,6 @@ class Options extends Base {
 	 * @param string $option Name of option to be used as array key for retrieving the specific value
 	 *
 	 * @return mixed
-	 * @since 2.0.3
 	 */
 	public function get_option( $option, $options = null ) {
 		if ( is_null( $options ) ) {
@@ -90,8 +88,6 @@ class Options extends Base {
 
 	/**
 	 * Update the options in the options table from the POST
-	 *
-	 * @since 3.0.0.1
 	 *
 	 * @param mixed $options
 	 *

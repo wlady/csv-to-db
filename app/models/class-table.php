@@ -12,7 +12,7 @@ class Table {
 	const TABLE_NAME = 'csv_to_db';
 
 	/**
-	 * Create DB table from saved fields settings
+	 * Create DB table from saved configuration
 	 * @return string/bool On error returns error message
 	 */
 	public static function create_table( $fields ) {
@@ -70,11 +70,11 @@ class Table {
 	}
 
 	/**
-	 * @param $fileName
+	 * @param $file_name
 	 *
 	 * @return mix On error returns error message
 	 */
-	public static function import_file( $fileName, $options ) {
+	public static function import_file( $file_name, $options ) {
 		global $wpdb;
 
 		$use_local     = $options['use-local'] == 1 ? 'LOCAL' : '';
@@ -98,7 +98,7 @@ class Table {
 		if ( ! empty( $options['lines-terminated'] ) ) {
 			$lines_params[] = 'TERMINATED BY \'' . $options['lines-terminated'] . '\'';
 		}
-		$query = 'LOAD DATA ' . $use_local . ' INFILE \'' . $fileName . '\' INTO TABLE `' . $wpdb->get_blog_prefix() . self::TABLE_NAME . '`';
+		$query = 'LOAD DATA ' . $use_local . ' INFILE \'' . $file_name . '\' INTO TABLE `' . $wpdb->get_blog_prefix() . self::TABLE_NAME . '`';
 		if ( count( $fields_params ) ) {
 			$query .= ' FIELDS ' . implode( ' ', $fields_params );
 		}
