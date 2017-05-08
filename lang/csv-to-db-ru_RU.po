@@ -53,18 +53,18 @@ msgstr "Завершено! Перезагрузка…"
 
 #: app/controllers/admin.php:270
 msgid ""
-"Fields undefined! Click <a href=\"admin.php?page=wp-csv-to-db-fields"
+"Fields undefined! Click <a href=\"class-admin.php?page=wp-csv-to-db-fields"
 "\">Fields</a> to prepare the fields."
 msgstr ""
-"Поля не заданы. Кликните <a href=\"admin.php?page=wp-csv-to-db-fields"
+"Поля не заданы. Кликните <a href=\"class-admin.php?page=wp-csv-to-db-fields"
 "\">Поля</a> настройки."
 
 #: app/controllers/admin.php:296
 msgid ""
-"Columns undefined! Click <a href=\"admin.php?page=wp-csv-to-db-fields"
+"Columns undefined! Click <a href=\"class-admin.php?page=wp-csv-to-db-fields"
 "\">Fields</a> to prepare the fields."
 msgstr ""
-"Колонки не заданы. Кликните <a href=\"admin.php?page=wp-csv-to-db-fields"
+"Колонки не заданы. Кликните <a href=\"class-admin.php?page=wp-csv-to-db-fields"
 "\">Поля</a> настройки."
 
 #: app/models/file.php:25 app/views/fields.php:162 app/views/import.php:53

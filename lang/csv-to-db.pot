@@ -50,13 +50,13 @@ msgstr ""
 
 #: app/controllers/admin.php:270
 msgid ""
-"Fields undefined! Click <a href=\"admin.php?page=wp-csv-to-db-fields"
+"Fields undefined! Click <a href=\"class-admin.php?page=wp-csv-to-db-fields"
 "\">Fields</a> to prepare the fields."
 msgstr ""
 
 #: app/controllers/admin.php:296
 msgid ""
-"Columns undefined! Click <a href=\"admin.php?page=wp-csv-to-db-fields"
+"Columns undefined! Click <a href=\"class-admin.php?page=wp-csv-to-db-fields"
 "\">Fields</a> to prepare the fields."
 msgstr ""
 

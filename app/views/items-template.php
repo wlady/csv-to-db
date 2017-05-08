@@ -1,6 +1,6 @@
 <div class="wrap ">
     <div id="icon-options-general" class="icon32"><br/></div>
-    <h2><?php _e('CSV to DB Items', 'csv-to-db'); ?></h2>
+    <h2><?php _e( 'CSV to DB Items', 'csv-to-db' ); ?></h2>
     <table id="table"
            data-toggle="table"
            data-ajax="ajaxRequest"
@@ -15,11 +15,11 @@
            data-search="true">
         <thead>
         <tr>
-            <?php foreach ($data['columns'] as $column) : ?>
+			<?php foreach ( $data['columns'] as $column ) : ?>
                 <th data-field="<?php echo $column['name']; ?>"
-                    <?php if (isset($column['check'])) : ?>data-checkbox="true"<?php endif; ?>
+				    <?php if ( isset( $column['check'] ) ) : ?>data-checkbox="true"<?php endif; ?>
                     data-align="<?php echo $column['align']; ?>"><?php echo $column['title']; ?></th>
-            <?php endforeach; ?>
+			<?php endforeach; ?>
         </tr>
         </thead>
     </table>

@@ -1,66 +1,89 @@
 <div class="wrap ">
     <div id="icon-options-general" class="icon32"><br/></div>
-    <h2><?php _e('CSV to DB', 'csv-to-db'); ?></h2>
-    <?php if ($this->message) : ?>
-        <div class="updated <?php if ($error) echo 'error'; ?>">
-            <p><?php _e($this->message); ?></p>
+    <h2><?php _e( 'CSV to DB', 'csv-to-db' ); ?></h2>
+	<?php if ( $this->message ) : ?>
+        <div class="updated <?php if ( $error ) {
+			echo 'error';
+		} ?>">
+            <p><?php _e( $this->message ); ?></p>
         </div>
-    <?php endif; ?>
+	<?php endif; ?>
     <div id="output" class="updated hidden"></div>
-    <?php if (count($this->get_option('fields'))) : ?>
+	<?php if ( count( $this->get_option( 'fields' ) ) ) : ?>
         <form action="" method="post" id="schema-table">
             <input type="hidden" name="action" value="save_schema"/>
-            <h3><?php _e('Fields', 'csv-to-db'); ?></h3>
+            <h3><?php _e( 'Fields', 'csv-to-db' ); ?></h3>
             <table class="form-table table table-striped">
                 <tr>
                     <th>
-                        <?php _e('Name', 'csv-to-db'); ?>
+						<?php _e( 'Name', 'csv-to-db' ); ?>
                     </th>
                     <th>
-                        <?php _e('Type', 'csv-to-db'); ?>
+						<?php _e( 'Type', 'csv-to-db' ); ?>
                     </th>
                     <th>
-                        <?php _e('Size', 'csv-to-db'); ?>
+						<?php _e( 'Size', 'csv-to-db' ); ?>
                     </th>
                     <th>
-                        <?php _e('Null', 'csv-to-db'); ?>
+						<?php _e( 'Null', 'csv-to-db' ); ?>
                     </th>
                     <th>
-                        <?php _e('AI', 'csv-to-db'); ?>
+						<?php _e( 'AI', 'csv-to-db' ); ?>
                     </th>
                     <th>
-                        <?php _e('Index', 'csv-to-db'); ?>
+						<?php _e( 'Index', 'csv-to-db' ); ?>
                     </th>
                     <th>
-                        <?php _e('Title', 'csv-to-db'); ?>
+						<?php _e( 'Title', 'csv-to-db' ); ?>
                     </th>
                     <th>
-                        <?php _e('Show', 'csv-to-db'); ?>
+						<?php _e( 'Show', 'csv-to-db' ); ?>
                     </th>
                     <th>
-                        <?php _e('Align', 'csv-to-db'); ?>
+						<?php _e( 'Align', 'csv-to-db' ); ?>
                     </th>
                     <th>
-                        <?php _e('Check', 'csv-to-db'); ?>
+						<?php _e( 'Check', 'csv-to-db' ); ?>
                     </th>
                 </tr>
-                <?php foreach ($this->get_option('fields') as $key => $field) : ?>
+				<?php foreach ( $this->get_option( 'fields' ) as $key => $field ) : ?>
                     <tr valign="top">
                         <td scope="row">
-                            <?php echo $field['name']; ?>
+							<?php echo $field['name']; ?>
                             <input type="hidden" name="csv-to-db[fields][<?php echo $key; ?>][name]"
                                    value="<?php echo $field['name']; ?>"/>
                         </td>
                         <td>
                             <select name="csv-to-db[fields][<?php echo $key; ?>][type]" style="width:100%"
                                     onchange="changeSize(this.value, <?php echo $key; ?>)">
-                                <option <?php if ($field['type'] == 'VARCHAR') echo 'selected'; ?>>VARCHAR</option>
-                                <option <?php if ($field['type'] == 'TEXT') echo 'selected'; ?>>TEXT</option>
-                                <option <?php if ($field['type'] == 'BLOB') echo 'selected'; ?>>BLOB</option>
-                                <option <?php if ($field['type'] == 'INT') echo 'selected'; ?>>INT</option>
-                                <option <?php if ($field['type'] == 'FLOAT') echo 'selected'; ?>>FLOAT</option>
-                                <option <?php if ($field['type'] == 'DOUBLE') echo 'selected'; ?>>DOUBLE</option>
-                                <option <?php if ($field['type'] == 'DECIMAL') echo 'selected'; ?>>DECIMAL</option>
+                                <option <?php if ( $field['type'] == 'VARCHAR' ) {
+									echo 'selected';
+								} ?>>VARCHAR
+                                </option>
+                                <option <?php if ( $field['type'] == 'TEXT' ) {
+									echo 'selected';
+								} ?>>TEXT
+                                </option>
+                                <option <?php if ( $field['type'] == 'BLOB' ) {
+									echo 'selected';
+								} ?>>BLOB
+                                </option>
+                                <option <?php if ( $field['type'] == 'INT' ) {
+									echo 'selected';
+								} ?>>INT
+                                </option>
+                                <option <?php if ( $field['type'] == 'FLOAT' ) {
+									echo 'selected';
+								} ?>>FLOAT
+                                </option>
+                                <option <?php if ( $field['type'] == 'DOUBLE' ) {
+									echo 'selected';
+								} ?>>DOUBLE
+                                </option>
+                                <option <?php if ( $field['type'] == 'DECIMAL' ) {
+									echo 'selected';
+								} ?>>DECIMAL
+                                </option>
                             </select>
                         </td>
                         <td>
@@ -79,9 +102,18 @@
                             <select class="indexSelector" name="csv-to-db[fields][<?php echo $key; ?>][index]"
                                     style="width:100%" onchange="checkIndex(this.value, <?php echo $key; ?>)">
                                 <option></option>
-                                <option <?php if ($field['index'] == 'PRIMARY') echo 'selected'; ?>>PRIMARY</option>
-                                <option <?php if ($field['index'] == 'UNIQUE') echo 'selected'; ?>>UNIQUE</option>
-                                <option <?php if ($field['index'] == 'INDEX') echo 'selected'; ?>>INDEX</option>
+                                <option <?php if ( $field['index'] == 'PRIMARY' ) {
+									echo 'selected';
+								} ?>>PRIMARY
+                                </option>
+                                <option <?php if ( $field['index'] == 'UNIQUE' ) {
+									echo 'selected';
+								} ?>>UNIQUE
+                                </option>
+                                <option <?php if ( $field['index'] == 'INDEX' ) {
+									echo 'selected';
+								} ?>>INDEX
+                                </option>
                             </select>
                         </td>
                         <td>
@@ -95,9 +127,15 @@
                         <td>
                             <select name="csv-to-db[fields][<?php echo $key; ?>][align]" style="width:100%">
                                 <option></option>
-                                <option value="left" <?php if ($field['align'] == 'left') echo 'selected'; ?>><?php _e('Left', 'csv-to-db'); ?></option>
-                                <option value="center" <?php if ($field['align'] == 'center') echo 'selected'; ?>><?php _e('Center', 'csv-to-db'); ?></option>
-                                <option value="right" <?php if ($field['align'] == 'right') echo 'selected'; ?>><?php _e('Right', 'csv-to-db'); ?></option>
+                                <option value="left" <?php if ( $field['align'] == 'left' ) {
+									echo 'selected';
+								} ?>><?php _e( 'Left', 'csv-to-db' ); ?></option>
+                                <option value="center" <?php if ( $field['align'] == 'center' ) {
+									echo 'selected';
+								} ?>><?php _e( 'Center', 'csv-to-db' ); ?></option>
+                                <option value="right" <?php if ( $field['align'] == 'right' ) {
+									echo 'selected';
+								} ?>><?php _e( 'Right', 'csv-to-db' ); ?></option>
                             </select>
                         </td>
                         <td>
@@ -107,37 +145,39 @@
                                    onchange="checkOtherCheckboxes(<?php echo $key; ?>)"/>
                         </td>
                     </tr>
-                <?php endforeach; ?>
+				<?php endforeach; ?>
             </table>
             <p class="submit">
                 <input type="submit" class="button-primary pull-left submitBtn"
-                       value="<?php _e('Save Changes', 'csv-to-db') ?>" data-action="save_fields" data-toggle="tooltip"
-                       title="<?php _e('Save fields configuration', 'csv-to-db') ?>"/>
-                <input type="submit" class="button pull-left submitBtn"
-                       value="<?php _e('Export Fields', 'csv-to-db') ?>" data-action="export_fields"
-                       data-toggle="tooltip" title="<?php _e('Export fields configuration', 'csv-to-db') ?>"/>
-                <input type="submit" class="button pull-left submitBtn" value="<?php _e('Clear Fields', 'csv-to-db') ?>"
-                       data-action="clear_fields" data-toggle="tooltip"
-                       title="<?php _e('Clear fields', 'csv-to-db') ?>"/>
-                <input type="submit" class="button pull-right submitBtn"
-                       value="<?php _e('Create DB Table', 'csv-to-db') ?>" data-action="create_table"
+                       value="<?php _e( 'Save Changes', 'csv-to-db' ) ?>" data-action="save_fields"
                        data-toggle="tooltip"
-                       title="<?php _e('Create DB Table from current fields configuration', 'csv-to-db') ?>"/>
+                       title="<?php _e( 'Save fields configuration', 'csv-to-db' ) ?>"/>
+                <input type="submit" class="button pull-left submitBtn"
+                       value="<?php _e( 'Export Fields', 'csv-to-db' ) ?>" data-action="export_fields"
+                       data-toggle="tooltip" title="<?php _e( 'Export fields configuration', 'csv-to-db' ) ?>"/>
+                <input type="submit" class="button pull-left submitBtn"
+                       value="<?php _e( 'Clear Fields', 'csv-to-db' ) ?>"
+                       data-action="clear_fields" data-toggle="tooltip"
+                       title="<?php _e( 'Clear fields', 'csv-to-db' ) ?>"/>
                 <input type="submit" class="button pull-right submitBtn"
-                       value="<?php _e('Export Schema', 'csv-to-db') ?>" data-action="export_schema"
-                       data-toggle="tooltip" title="<?php _e('Export DB schema', 'csv-to-db') ?>"/>
+                       value="<?php _e( 'Create DB Table', 'csv-to-db' ) ?>" data-action="create_table"
+                       data-toggle="tooltip"
+                       title="<?php _e( 'Create DB Table from current fields configuration', 'csv-to-db' ) ?>"/>
+                <input type="submit" class="button pull-right submitBtn"
+                       value="<?php _e( 'Export Schema', 'csv-to-db' ) ?>" data-action="export_schema"
+                       data-toggle="tooltip" title="<?php _e( 'Export DB schema', 'csv-to-db' ) ?>"/>
             </p>
         </form>
-    <?php endif; ?>
+	<?php endif; ?>
     <div class="clearfix"></div>
     <hr/>
     <form action="" method="post" enctype="multipart/form-data" id="import_fields_form">
         <input type="hidden" name="action" value="import_fields"/>
-        <h3><?php _e('Import Fields', 'csv-to-db'); ?></h3>
+        <h3><?php _e( 'Import Fields', 'csv-to-db' ); ?></h3>
         <table class="form-table" id="import-fields">
             <tr valign="top">
                 <td scope="row" width="200">
-                    <?php _e('Data File', 'csv-to-db'); ?>
+					<?php _e( 'Data File', 'csv-to-db' ); ?>
                 </td>
                 <td>
                     <input name="file" type="file"/>
@@ -145,9 +185,9 @@
             </tr>
         </table>
         <p class="submit">
-            <input type="submit" class="button-primary" value="<?php _e('Import', 'csv-to-db') ?>"
+            <input type="submit" class="button-primary" value="<?php _e( 'Import', 'csv-to-db' ) ?>"
                    id="import_fields_btn" data-toggle="tooltip"
-                   title="<?php _e('Import fields configuration', 'csv-to-db') ?>"
+                   title="<?php _e( 'Import fields configuration', 'csv-to-db' ) ?>"
                    onclick="return confirmImportFields()"/>
         </p>
     </form>
@@ -159,11 +199,11 @@
     <hr/>
     <form action="" method="post" enctype="multipart/form-data" id="upload_form" onsubmit="return false">
         <input type="hidden" name="action" value="analyze_csv"/>
-        <h3><?php _e('Analyze CSV', 'csv-to-db'); ?></h3>
+        <h3><?php _e( 'Analyze CSV', 'csv-to-db' ); ?></h3>
         <table class="form-table">
             <tr valign="top">
                 <td scope="row" width="200">
-                    <?php _e('CSV File', 'csv-to-db'); ?>
+					<?php _e( 'CSV File', 'csv-to-db' ); ?>
                 </td>
                 <td>
                     <input name="file" type="file"/>
@@ -171,9 +211,9 @@
             </tr>
         </table>
         <p class="submit">
-            <input type="button" class="button-primary" value="<?php _e('Analyze', 'csv-to-db') ?>" id="upload_btn"
+            <input type="button" class="button-primary" value="<?php _e( 'Analyze', 'csv-to-db' ) ?>" id="upload_btn"
                    data-toggle="tooltip"
-                   title="<?php _e('Analyze CSV file and create the fields configuration', 'csv-to-db') ?>"/>
+                   title="<?php _e( 'Analyze CSV file and create the fields configuration', 'csv-to-db' ) ?>"/>
         </p>
     </form>
     <div id="progress-wrp" class="progress progress-striped active">
@@ -183,13 +223,13 @@
 </div>
 <script>
     var labels = {
-        are_you_sure: "<?php _e('Are you sure?', 'csv-to-db') ?>",
-        upload: "<?php _e('Upload', 'csv-to-db') ?>",
-        old_browser: "<?php _e('Your browser does not support new File API! Please upgrade.', 'csv-to-db') ?>",
-        unsupported: "<?php _e('Unsupported File!', 'csv-to-db'); ?>",
-        limit_exceeded: "<?php _e('Limit Exceeded!', 'csv-to-db'); ?>",
-        file_too_big: "<?php _e('File size is too big!', 'csv-to-db'); ?>",
-        wait: "<?php _e('Please Wait...', 'csv-to-db'); ?>"
+        are_you_sure: "<?php _e( 'Are you sure?', 'csv-to-db' ) ?>",
+        upload: "<?php _e( 'Upload', 'csv-to-db' ) ?>",
+        old_browser: "<?php _e( 'Your browser does not support new File API! Please upgrade.', 'csv-to-db' ) ?>",
+        unsupported: "<?php _e( 'Unsupported File!', 'csv-to-db' ); ?>",
+        limit_exceeded: "<?php _e( 'Limit Exceeded!', 'csv-to-db' ); ?>",
+        file_too_big: "<?php _e( 'File size is too big!', 'csv-to-db' ); ?>",
+        wait: "<?php _e( 'Please Wait...', 'csv-to-db' ); ?>"
     };
 
     var max_file_size = <?php echo $this->upload_max_filesize; ?>; //allowed file size. (1 MB = 1048576)

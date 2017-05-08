@@ -8,18 +8,18 @@
 
 namespace CSV2DB;
 
-if (!defined('WPINC')) {
-    die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
 }
 
 include __DIR__ . '/app/autoload.php';
 
 $config = array(
-    'plugin_file'     => __FILE__,
-    'plugin_basename' => \plugin_basename(__FILE__),
-    'plugin_slug'     => basename(__DIR__),
-    'plugin_dir'      => __DIR__,
+	'plugin_file'     => __FILE__,
+	'plugin_basename' => \plugin_basename( __FILE__ ),
+	'plugin_slug'     => basename( __DIR__ ),
+	'plugin_dir'      => __DIR__,
 );
 
-$plugin = new Engine\Base($config);
+$plugin = new Engine\Base( $config );
 $plugin->init();
