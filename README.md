@@ -1,6 +1,6 @@
 # CSV to DB Manager #
 
-Demo plugin is built with micro-MVC engine. 
+Demo plugin is built with my own micro-MVC engine. 
 
 Installed from Zip file
 ![screenshot-0.png](screenshot-0.png)
